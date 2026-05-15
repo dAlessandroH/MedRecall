@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MedRecall 🧠</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --bg:#05070e;--bg2:#0a0d1a;--bg3:#0f1224;--card:#0c0f1e;--card2:#111428;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --text:#eef1ff;--text2:#6b7bab;--text3:#2e3860;
+  --g1:#00e87a;--g2:#a855f7;
+  --accent:#00e87a;--accentd:#00b85f;--accentbg:rgba(0,232,122,0.09);--accentb:rgba(0,232,122,0.22);
+  --purple:#a855f7;--purplebg:rgba(168,85,247,0.09);--purpleb:rgba(168,85,247,0.22);
+  --red:#f43f5e;--redbg:rgba(244,63,94,0.09);--redb:rgba(244,63,94,0.22);
+  --orange:#fb923c;--orangebg:rgba(251,146,60,0.09);--orangeb:rgba(251,146,60,0.22);
+  --blue:#60a5fa;--bluebg:rgba(96,165,250,0.09);--blueb:rgba(96,165,250,0.22);
+  --yellow:#fbbf24;--yellowbg:rgba(251,191,36,0.09);
+  --r:16px;--r2:11px;--r3:8px;
+  --sh:0 0 0 1px rgba(255,255,255,0.03),0 8px 32px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+#root{display:flex;flex-direction:column;min-height:100vh;}
+.header{position:sticky;top:0;z-index:200;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(5,7,14,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--text);display:flex;align-items:center;gap:9px;letter-spacing:-0.4px;cursor:pointer;}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--g1),var(--g2));display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 14px rgba(0,232,122,0.4);}
+.nav{display:flex;gap:2px;align-items:center;}
+.nav-btn{padding:6px 11px;border-radius:var(--r3);border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;}
+.nav-btn:hover{background:var(--bg3);color:var(--text);}
+.nav-btn.active{background:var(--bg3);color:var(--text);}
+.nav-btn.active i{color:var(--accent);}
+.nav-sep{width:1px;height:20px;background:var(--border);margin:0 5px;}
+.main{flex:1;max-width:900px;width:100%;margin:0 auto;padding:28px 22px 80px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--card2);color:var(--text);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;line-height:1;}
+.btn:hover{background:var(--bg3);}
+.btn:active{transform:scale(0.97);}
+.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+.btn-accent{background:linear-gradient(135deg,var(--g1),#00c96a);color:#000;border:none;font-weight:700;box-shadow:0 0 20px rgba(0,232,122,0.25);}
+.btn-accent:hover{box-shadow:0 0 28px rgba(0,232,122,0.4);filter:brightness(1.05);}
+.btn-purple{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;font-weight:700;box-shadow:0 0 16px rgba(168,85,247,0.2);}
+.btn-purple:hover{box-shadow:0 0 24px rgba(168,85,247,0.35);}
+.btn-lg{padding:14px 28px;font-size:15px;}
+.btn-xl{padding:17px 32px;font-size:16px;font-weight:700;}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:var(--r3);}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px;}
+.btn-red{background:var(--redbg);color:var(--red);border-color:var(--redb);}
+.btn-red:hover{background:rgba(244,63,94,0.16);}
+.btn-green{background:var(--accentbg);color:var(--accent);border-color:var(--accentb);}
+.btn-green:hover{background:rgba(0,232,122,0.16);}
+.btn-blue{background:var(--bluebg);color:var(--blue);border-color:var(--blueb);}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{color:var(--text);background:var(--bg3);}
+.btn-full{width:100%;justify-content:center;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;box-shadow:var(--sh);}
+.card-lg{padding:30px;}
+.card-glow{box-shadow:var(--sh),0 0 20px rgba(0,232,122,0.12);border-color:var(--accentb);}
+.card-hover{transition:all 0.2s;cursor:pointer;}
+.card-hover:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 12px 40px rgba(0,0,0,0.55);}
+.input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--bg3);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;resize:vertical;}
+.input:focus{border-color:var(--accent);}
+.input::placeholder{color:var(--text3);}
+.label{font-size:10px;font-weight:700;color:var(--text3);margin-bottom:7px;display:block;text-transform:uppercase;letter-spacing:0.08em;}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:13px;}
+.g4{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.chip-green{background:var(--accentbg);color:var(--accent);border:1px solid var(--accentb);}
+.chip-red{background:var(--redbg);color:var(--red);border:1px solid var(--redb);}
+.chip-orange{background:var(--orangebg);color:var(--orange);border:1px solid var(--orangeb);}
+.chip-blue{background:var(--bluebg);color:var(--blue);border:1px solid var(--blueb);}
+.chip-purple{background:var(--purplebg);color:var(--purple);border:1px solid var(--purpleb);}
+.pbar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:22px;}
+.pbar-fill{height:100%;border-radius:2px;transition:width 0.4s ease;background:linear-gradient(90deg,var(--g1),var(--g2));}
+.xpbar-wrap{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.xpbar-fill{height:100%;background:linear-gradient(90deg,var(--g1),var(--g2));border-radius:3px;transition:width 0.6s ease;}
+.fc-scene{perspective:1200px;width:100%;height:240px;cursor:pointer;margin-bottom:16px;}
+.fc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.45s cubic-bezier(.4,0,.2,1);}
+.fc-inner.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px;text-align:center;background:var(--card);}
+.fc-face.back{transform:rotateY(180deg);background:var(--card2);border-color:var(--accentb);}
+.fc-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:5px;}
+.fc-q{font-size:19px;line-height:1.6;color:var(--text);font-weight:500;}
+.fc-a{font-size:15px;line-height:1.75;color:var(--text);}
+.recall-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:30px;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:160px;justify-content:center;margin-bottom:14px;position:relative;transition:border-color 0.3s;}
+.recall-card.revealed{border-color:var(--accentb);}
+.revealed-box{background:var(--accentbg);border:1px solid var(--accentb);border-radius:var(--r2);padding:18px;margin-bottom:14px;border-left:3px solid var(--accent);}
+.qopt{width:100%;text-align:left;padding:14px 16px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--card2);cursor:pointer;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:9px;display:flex;align-items:flex-start;gap:11px;transition:all 0.15s;}
+.qopt:hover:not(:disabled){border-color:var(--accent);background:var(--accentbg);}
+.qopt.correct{background:var(--accentbg);border-color:var(--accent);color:var(--accent);}
+.qopt.wrong{background:var(--redbg);border-color:var(--red);color:var(--red);}
+.qopt-key{min-width:24px;height:24px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;}
+.qopt.correct .qopt-key{background:rgba(0,232,122,0.2);border-color:var(--accent);color:var(--accent);}
+.qopt.wrong .qopt-key{background:rgba(244,63,94,0.2);border-color:var(--red);color:var(--red);}
+.rate-btn{flex:1;padding:16px 8px;border-radius:var(--r2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.15s;border:1px solid transparent;}
+.rate-btn i{font-size:22px;}
+.rate-sub{font-size:10px;opacity:0.65;font-weight:400;}
+.statbox{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.statbox-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:4px;}
+.statbox-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--text);line-height:1;}
+.statbox-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+.score-ring{width:84px;height:84px;border-radius:50%;border:5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;}
+.level-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:linear-gradient(135deg,rgba(0,232,122,0.12),rgba(168,85,247,0.12));border:1px solid rgba(255,255,255,0.1);font-size:11px;font-weight:700;}
+.deck-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all 0.2s;}
+.deck-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,0.5);}
+.deck-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.deck-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.deck-meta{font-size:11px;color:var(--text3);margin-bottom:8px;}
+.due-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--orangebg);color:var(--orange);border:1px solid var(--orangeb);}
+.scard{padding:14px 10px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--card2);cursor:pointer;text-align:center;transition:all 0.15s;}
+.scard:hover{border-color:var(--accent);background:var(--accentbg);}
+.scard-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);}
+.scard-lbl{font-size:10px;color:var(--text3);margin-top:3px;}
+.scard-time{font-size:10px;color:var(--text3);margin-top:1px;}
+.momentum{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;background:var(--orangebg);border:1px solid var(--orangeb);color:var(--orange);}
+.pomo{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text2);transition:all 0.2s;}
+.pomo.on{border-color:var(--accent);color:var(--accent);}
+.pomo.warn{border-color:var(--orange);color:var(--orange);}
+.dropzone{border:2px dashed var(--border2);border-radius:var(--r);padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.dropzone:hover,.dropzone.over{border-color:var(--accent);background:var(--accentbg);}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:5px;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.kbd{display:inline-block;padding:1px 6px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);font-size:10px;color:var(--text3);font-family:monospace;}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.mono{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:12px 14px;font-family:'Courier New',monospace;font-size:11px;color:var(--text2);white-space:pre-wrap;word-break:break-all;line-height:1.6;position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border2);font-size:10px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.copy-btn:hover{color:var(--text);}
+.empty{text-align:center;padding:52px 20px;}
+.empty-icon{font-size:42px;opacity:0.18;margin-bottom:16px;display:block;}
+.empty-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:9px;}
+.empty-sub{font-size:13px;color:var(--text2);margin-bottom:22px;line-height:1.65;}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:6px;}
+.page-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:22px;}
+.section-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:30px;max-width:520px;width:100%;box-shadow:0 0 0 1px rgba(255,255,255,0.05),0 32px 80px rgba(0,0,0,0.7);max-height:90vh;overflow-y:auto;}
+.ach-toast{position:fixed;bottom:24px;right:24px;z-index:400;background:var(--card);border:1px solid var(--accentb);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;max-width:320px;animation:slideIn 0.4s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.ach-toast.out{animation:slideOut 0.3s ease forwards;}
+@keyframes slideOut{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(20px);}}
+.xp-pop{position:fixed;pointer-events:none;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent);text-shadow:0 0 10px rgba(0,232,122,0.6);animation:xpFloat 1.3s ease forwards;z-index:500;}
+@keyframes xpFloat{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-70px);}}
+.sprint-timer{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.ach-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;display:flex;align-items:center;gap:12px;}
+.ach-item.unlocked{border-color:var(--accentb);background:var(--accentbg);}
+.ach-icon{font-size:28px;width:44px;text-align:center;flex-shrink:0;}
+.ach-item.locked .ach-icon{filter:grayscale(1);opacity:0.3;}
+.bar-wrap{display:flex;align-items:flex-end;gap:5px;height:80px;}
+.bar{flex:1;border-radius:4px 4px 0 0;transition:height 0.5s ease;cursor:default;position:relative;}
+.bar:hover .bar-tip{display:block;}
+.bar-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--text);white-space:nowrap;font-weight:600;z-index:10;}
+.card-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);}
+.card-row:last-child{border-bottom:none;}
+.search-wrap{position:relative;margin-bottom:14px;}
+.search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none;}
+.search-input{width:100%;padding:9px 14px 9px 36px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--bg3);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--accent);}
+.deck-name-edit{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:transparent;border:none;border-bottom:1.5px solid var(--accent);color:var(--text);outline:none;width:100%;}
+.break-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);z-index:250;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;text-align:center;padding:24px;}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.7;}50%{transform:scale(1.4);opacity:1;}}
+.breath-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));animation:breathe 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;color:#000;box-shadow:0 0 40px rgba(0,232,122,0.4);}
+.mix-badge{background:linear-gradient(135deg,rgba(0,232,122,0.15),rgba(168,85,247,0.15));border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2);}
+.focus-overlay{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;padding:40px 22px;overflow-y:auto;}
+.focus-exit-btn{position:fixed;top:16px;right:16px;z-index:101;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+.fade-up{animation:fadeUp 0.25s ease both;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{animation:spin 0.65s linear infinite;width:16px;height:16px;border-radius:50%;}
+.spin-dk{border:2px solid rgba(0,0,0,0.2);border-top-color:#000;}
+.spin-lt{border:2px solid var(--border2);border-top-color:var(--accent);}
+@keyframes confetti{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(220px) rotate(720deg);opacity:0}}
+.confetti-p{position:fixed;animation:confetti 1.6s ease-in both;pointer-events:none;z-index:9999;}
+</style>
+</head>
+<body>
+<div id="root"><div style="height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#2e3860;font-family:sans-serif;font-size:13px;"><div class="spin spin-lt" style="width:24px;height:24px;"></div>Cargando MedRecall...</div></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+/* ══ UTILS ══════════════════════════════════════════════════════ */
+function useLS(key, def) {
+  const [v, setV] = useState(() => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; } });
+  useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }, [key, v]);
+  return [v, setV];
+}
+const toDate = d => d.toISOString().split('T')[0];
+const todayStr = () => toDate(new Date());
+const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+const shuffle = a => [...a].sort(() => Math.random() - 0.5);
+const isDue = c => !c.nextReview || c.nextReview <= todayStr();
+const fmt = n => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+const makeCard = (q, a) => ({ id: uid(), q, a, interval: 1, reps: 0, ef: 2.5, nextReview: null, lastReview: null });
+
+function sm2(card, q) {
+  let { interval = 1, reps = 0, ef = 2.5 } = card;
+  if (q === 0) { interval = 1; reps = 0; }
+  else {
+    ef = Math.max(1.3, ef + 0.1 - (2 - q) * (0.08 + (2 - q) * 0.02));
+    if (reps === 0) interval = 1; else if (reps === 1) interval = 6; else interval = Math.ceil(interval * ef);
+    reps++;
+  }
+  const nr = new Date(); nr.setDate(nr.getDate() + interval);
+  return { ...card, interval, reps, ef, nextReview: toDate(nr), lastReview: todayStr() };
+}
+
+function splitCSV(line) {
+  const r = []; let cur = '', inQ = false;
+  for (const ch of line) {
+    if (ch === '"' && !inQ) { inQ = true; continue; }
+    if (ch === '"' && inQ) { inQ = false; continue; }
+    if (ch === ',' && !inQ) { r.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  r.push(cur); return r;
+}
+const parseFlashCSV = text => text.trim().split(/\r?\n/).filter(l => l.trim()).map(l => splitCSV(l).map(s => s.trim())).filter(c => c.length >= 2 && c[0] && c[1]).map(c => makeCard(c[0], c[1]));
+const parseQuizCSV = text => {
+  const LETTERS = ['a','b','c','d'];
+  return text.trim().split(/\r?\n/).filter(l => l.trim())
+    .map(l => splitCSV(l).map(s => s.trim()))
+    .filter(c => {
+      if (c.length < 6 || !c[0] || !c[1] || !c[5]) return false;
+      // Saltar fila de encabezado
+      const ans = c[5].toLowerCase().trim();
+      if (c[0].toLowerCase() === 'pregunta') return false;
+      if (ans === 'respuesta' || ans === 'correcta') return false;
+      return true;
+    })
+    .map(c => {
+      const opts = [c[1], c[2], c[3], c[4]].filter(Boolean);
+      const raw = c[5].toLowerCase().trim();
+      // Soporta formato letra (a/b/c/d) Y formato texto completo
+      const isLetter = LETTERS.includes(raw);
+      const correctText = isLetter ? opts[LETTERS.indexOf(raw)] : c[5];
+      const expl = c.length > 7 && c[7] ? c[7].trim() : '';
+      // card.a = texto correcto LIMPIO (sin explicación) para que coincida con opts[]
+      const card = { ...makeCard(c[0], correctText), opts, expl };
+      return card;
+    });
+};
+
+function exportDeck(deck) {
+  const csv = 'pregunta,respuesta\n' + deck.cards.map(c => `"${c.q.replace(/"/g, '""')}","${c.a.replace(/"/g, '""')}"`).join('\n');
+  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = deck.name + '.csv'; a.click();
+}
+
+const PALETTES = [
+  { color: '#f43f5e', bg: 'rgba(244,63,94,0.12)', icon: 'ti-heart-rate-monitor' },
+  { color: '#a855f7', bg: 'rgba(168,85,247,0.12)', icon: 'ti-brain' },
+  { color: '#00e87a', bg: 'rgba(0,232,122,0.10)', icon: 'ti-pill' },
+  { color: '#fb923c', bg: 'rgba(251,146,60,0.12)', icon: 'ti-dna' },
+  { color: '#60a5fa', bg: 'rgba(96,165,250,0.12)', icon: 'ti-stethoscope' },
+  { color: '#f472b6', bg: 'rgba(244,114,182,0.12)', icon: 'ti-microscope' },
+  { color: '#34d399', bg: 'rgba(52,211,153,0.12)', icon: 'ti-activity' },
+  { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)', icon: 'ti-eye' },
+];
+const palFor = name => PALETTES[name.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % PALETTES.length];
+
+/* Sound */
+const SFX = {
+  play(type) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); const t = ctx.currentTime;
+      if (type === 'correct') { o.frequency.setValueAtTime(520, t); o.frequency.setValueAtTime(660, t + 0.1); g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35); o.start(t); o.stop(t + 0.35); }
+      else if (type === 'wrong') { o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t); g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.25); o.start(t); o.stop(t + 0.25); }
+      else if (type === 'flip') { o.frequency.setValueAtTime(600, t); g.gain.setValueAtTime(0.07, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.1); o.start(t); o.stop(t + 0.1); }
+      else if (type === 'xp') { o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1100, t + 0.07); g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2); o.start(t); o.stop(t + 0.2); }
+      else if (type === 'levelup') { [440, 550, 660, 880].forEach((f, i) => { const oo = ctx.createOscillator(), gg = ctx.createGain(); oo.connect(gg); gg.connect(ctx.destination); oo.frequency.value = f; gg.gain.setValueAtTime(0.15, t + i * 0.1); gg.gain.exponentialRampToValueAtTime(0.001, t + i * 0.1 + 0.2); oo.start(t + i * 0.1); oo.stop(t + i * 0.1 + 0.2); }); }
+    } catch {}
+  }
+};
+
+function confettiBlast() {
+  const colors = ['#00e87a', '#a855f7', '#60a5fa', '#fb923c', '#f43f5e', '#fbbf24'];
+  for (let i = 0; i < 34; i++) {
+    const el = document.createElement('div'); el.className = 'confetti-p';
+    el.style.cssText = `left:${15 + Math.random() * 70}%;top:${Math.random() * 10}%;background:${colors[~~(Math.random() * colors.length)]};animation-delay:${Math.random() * 0.4}s;animation-duration:${1.2 + Math.random() * 0.8}s;border-radius:${Math.random() > 0.5 ? '50%' : '2px'};width:${6 + ~~(Math.random() * 7)}px;height:${6 + ~~(Math.random() * 7)}px;`;
+    document.body.appendChild(el); setTimeout(() => el.remove(), 2800);
+  }
+}
+
+/* XP / Levels */
+const LEVEL_XP = [0, 100, 250, 500, 900, 1500, 2400, 3800, 5800, 8500, 12000];
+const LEVEL_NAMES = ['Estudiante', 'Pre-Médico', 'Interno', 'Residente R1', 'Residente R2', 'Médico General', 'Especialista', 'Jefe Clínico', 'Profesor', 'Maestro', 'Eminencia'];
+const LEVEL_E = ['🎓', '📚', '🩺', '💉', '🔬', '🧬', '🏥', '👨‍⚕️', '🧑‍🏫', '🧠', '⚕️'];
+function getLevel(xp) {
+  let l = 0; for (let i = 0; i < LEVEL_XP.length; i++) { if (xp >= LEVEL_XP[i]) l = i; else break; }
+  return { level: l, name: LEVEL_NAMES[l], emoji: LEVEL_E[l], xpForNext: LEVEL_XP[Math.min(l + 1, LEVEL_XP.length - 1)], xpForCurrent: LEVEL_XP[l], progress: l < LEVEL_XP.length - 1 ? (xp - LEVEL_XP[l]) / (LEVEL_XP[l + 1] - LEVEL_XP[l]) : 1 };
+}
+
+/* Achievements */
+const ACHIEVEMENTS = [
+  { id: 'first', icon: '🎯', name: 'Primera tarjeta', desc: 'Estudia tu primera tarjeta', xp: 50 },
+  { id: 'ten', icon: '⚡', name: 'Despegue', desc: '10 tarjetas estudiadas', xp: 30 },
+  { id: 'fifty', icon: '🔥', name: 'En llamas', desc: '50 tarjetas estudiadas', xp: 75 },
+  { id: 'hundred', icon: '💯', name: 'Centurión', desc: '100 tarjetas estudiadas', xp: 150 },
+  { id: 'fivehun', icon: '🏆', name: 'Elite', desc: '500 tarjetas estudiadas', xp: 300 },
+  { id: 'streak3', icon: '🔥', name: '3 días seguidos', desc: 'Racha de 3 días', xp: 60 },
+  { id: 'streak7', icon: '⚡', name: 'Imparable', desc: 'Racha de 7 días', xp: 150 },
+  { id: 'streak14', icon: '🌟', name: 'Consistente', desc: 'Racha de 14 días', xp: 300 },
+  { id: 'perfect', icon: '💎', name: 'Perfeccionista', desc: 'Quiz con 100% de precisión', xp: 100 },
+  { id: 'night', icon: '🦉', name: 'Búho nocturno', desc: 'Estudia después de las 10pm', xp: 40 },
+  { id: 'early', icon: '🌅', name: 'Madrugador', desc: 'Estudia antes de las 7am', xp: 40 },
+  { id: 'import', icon: '📥', name: 'Importador', desc: 'Importa tu primer mazo', xp: 50 },
+  { id: 'ai', icon: '🤖', name: 'Generador IA', desc: 'Genera contenido con IA', xp: 75 },
+  { id: 'goal', icon: '🎯', name: 'Meta cumplida', desc: 'Completa tu meta diaria', xp: 80 },
+  { id: 'sprint', icon: '⚡', name: 'Velocista', desc: 'Completa un Sprint Mode', xp: 60 },
+  { id: 'mastery', icon: '🧠', name: 'Maestría', desc: 'Domina 20 tarjetas', xp: 120 },
+  { id: 'mix', icon: '🌀', name: 'Mezclador', desc: 'Estudia en Mix Mode', xp: 50 },
+  { id: 'add', icon: '✏️', name: 'Creador', desc: 'Añade una tarjeta manualmente', xp: 30 },
+];
+
+function checkAchievements(stats, decks) {
+  const unlocked = new Set(stats.achievements || []), newOnes = [];
+  const total = stats.total || 0, streak = stats.streak || 0;
+  const mastered = decks.reduce((s, d) => s + d.cards.filter(c => c.reps >= 3).length, 0);
+  const h = new Date().getHours();
+  const checks = [
+    ['first', total >= 1], ['ten', total >= 10], ['fifty', total >= 50],
+    ['hundred', total >= 100], ['fivehun', total >= 500],
+    ['streak3', streak >= 3], ['streak7', streak >= 7], ['streak14', streak >= 14],
+    ['perfect', !!stats.hadPerfect], ['night', h >= 22], ['early', h < 7],
+    ['import', !!stats.hadImport], ['ai', !!stats.hadAI],
+    ['goal', (stats.today || 0) >= (stats.dailyGoal || 20)],
+    ['sprint', !!stats.hadSprint], ['mastery', mastered >= 20],
+    ['mix', !!stats.hadMix], ['add', !!stats.hadAdd],
+  ];
+  checks.forEach(([id, cond]) => { if (cond && !unlocked.has(id)) { unlocked.add(id); newOnes.push(id); } });
+  return { achievements: [...unlocked], newOnes };
+}
+
+/* ══ POMODORO ═══════════════════════════════════════════════════ */
+function Timer() {
+  const DUR = 25 * 60, [sec, setSec] = useState(DUR), [on, setOn] = useState(false), [done, setDone] = useState(0);
+  useEffect(() => {
+    if (!on) return;
+    const t = setInterval(() => setSec(s => { if (s <= 1) { setOn(false); setDone(n => n + 1); if ('Notification' in window && Notification.permission === 'granted') new Notification('MedRecall 🍅', { body: '¡Pomodoro completo!' }); return DUR; } return s - 1; }), 1000);
+    return () => clearInterval(t);
+  }, [on]);
+  const m = String(~~(sec / 60)).padStart(2, '0'), s = String(sec % 60).padStart(2, '0');
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      {done > 0 && <span style={{ fontSize: 11, color: 'var(--orange)', fontWeight: 700 }}>{done}🍅</span>}
+      <button className={`pomo${on ? ' on' : ''}${on && sec < 5 * 60 ? ' warn' : ''}`}
+        onClick={() => { if (!on) setSec(DUR); setOn(r => !r); if ('Notification' in window) Notification.requestPermission(); }}
+        title="Pomodoro 25 min">
+        <i className={`ti ${on ? 'ti-player-pause' : 'ti-player-play'}`} />{m}:{s}
+      </button>
+    </div>
+  );
+}
+
+/* ══ GOAL RING ══════════════════════════════════════════════════ */
+function GoalRing({ current, total, size = 110 }) {
+  const r = (size - 12) / 2, circ = 2 * Math.PI * r, pct = Math.min(1, total > 0 ? current / total : 0);
+  return (
+    <div style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg width={size} height={size} style={{ position: 'absolute' }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--bg3)" strokeWidth="7" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="url(#gr)" strokeWidth="7"
+          strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`} style={{ transition: 'stroke-dashoffset 0.6s ease' }} />
+        <defs><linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#00e87a" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
+      </svg>
+      <div style={{ position: 'relative', textAlign: 'center' }}>
+        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: pct >= 1 ? 'var(--accent)' : 'var(--text)', lineHeight: 1 }}>{current}</div>
+        <div style={{ fontSize: 10, color: 'var(--text3)' }}>/{total}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ ACHIEVEMENT TOAST ══════════════════════════════════════════ */
+function AchievementToast({ achievement, onDone }) {
+  const [out, setOut] = useState(false);
+  useEffect(() => { const t = setTimeout(() => { setOut(true); setTimeout(onDone, 350); }, 4000); return () => clearTimeout(t); }, []);
+  const ach = ACHIEVEMENTS.find(a => a.id === achievement); if (!ach) return null;
+  return (
+    <div className={`ach-toast${out ? ' out' : ''}`}>
+      <div style={{ fontSize: 28 }}>{ach.icon}</div>
+      <div>
+        <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>¡Logro desbloqueado!</div>
+        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 800, color: 'var(--text)', marginBottom: 1 }}>{ach.name}</div>
+        <div style={{ fontSize: 11, color: 'var(--text2)' }}>{ach.desc} · +{ach.xp} XP</div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ BRAIN BREAK ════════════════════════════════════════════════ */
+function BrainBreak({ onDone }) {
+  const [phase, setPhase] = useState('inhale'), [sec, setSec] = useState(4), [cycles, setCycles] = useState(0);
+  const ORDER = ['inhale', 'hold', 'exhale', 'rest'];
+  const LABELS = { inhale: 'Inhala', hold: 'Sostén', exhale: 'Exhala', rest: 'Descansa' };
+  useEffect(() => {
+    const t = setInterval(() => {
+      setSec(s => {
+        if (s <= 1) {
+          setPhase(p => { const next = ORDER[(ORDER.indexOf(p) + 1) % 4]; if (next === 'inhale') setCycles(c => c + 1); return next; });
+          return 4;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="break-overlay">
+      <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>Pausa activa 🧘</div>
+      <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 28 }}>Respiración cuadrada — reduce estrés y mejora el foco</div>
+      <div className="breath-circle">
+        <span style={{ fontSize: 13, fontWeight: 700 }}>{LABELS[phase]}</span>
+        <span style={{ fontSize: 28, fontWeight: 800, lineHeight: 1 }}>{sec}</span>
+      </div>
+      <div style={{ marginTop: 18, fontSize: 13, color: 'var(--text2)' }}>{cycles} ciclo{cycles !== 1 ? 's' : ''} completo{cycles !== 1 ? 's' : ''}</div>
+      <button className="btn btn-accent btn-lg" style={{ marginTop: 16 }} onClick={onDone}><i className="ti ti-arrow-right" />Continuar estudiando</button>
+      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8 }}>Recomendados al menos 3 ciclos (~1 min)</div>
+    </div>
+  );
+}
+
+/* ══ HEADER ═════════════════════════════════════════════════════ */
+function Header({ view, onNav, onSettings, stats }) {
+  const lvl = getLevel(stats.xp || 0);
+  const NAV = [['home', 'ti-home', 'Inicio'], ['recall', 'ti-brain', 'Recall'], ['stats', 'ti-chart-bar', 'Stats'], ['import', 'ti-upload', 'Importar'], ['generate', 'ti-sparkles', 'IA'], ['achievements', 'ti-trophy', 'Logros']];
+  return (
+    <header className="header">
+      <div className="logo" onClick={() => onNav('home')}><div className="logo-mark">🧠</div>MedRecall</div>
+      <nav className="nav">
+        {NAV.map(([v, ic, lb]) => (<button key={v} className={`nav-btn${view === v ? ' active' : ''}`} onClick={() => onNav(v)}><i className={`ti ${ic}`} />{lb}</button>))}
+        <div className="nav-sep" />
+        <div className="level-badge" title={`${stats.xp || 0} XP`}><span>{lvl.emoji}</span><span style={{ background: 'linear-gradient(135deg,#00e87a,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{lvl.name}</span></div>
+        <Timer />
+        <button className="nav-btn" onClick={onSettings} title="Ajustes"><i className="ti ti-settings" /></button>
+      </nav>
+    </header>
+  );
+}
+
+/* ══ BAR CHART ══════════════════════════════════════════════════ */
+function BarChart({ data }) {
+  const max = Math.max(...data.map(d => d.v), 1);
+  return (
+    <div>
+      <div className="bar-wrap" style={{ marginBottom: 6 }}>
+        {data.map((d, i) => (
+          <div key={i} className="bar" style={{ height: `${Math.max(4, (d.v / max) * 100)}%`, background: d.v > 0 ? 'linear-gradient(180deg,var(--g1),var(--accentd))' : 'var(--bg3)' }}>
+            <div className="bar-tip">{d.label}: {d.v}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 5 }}>
+        {data.map((d, i) => <div key={i} style={{ flex: 1, fontSize: 9, color: 'var(--text3)', textAlign: 'center' }}>{d.short}</div>)}
+      </div>
+    </div>
+  );
+}
+
+/* ══ STATS PAGE ═════════════════════════════════════════════════ */
+function StatsPage({ stats, decks }) {
+  const lvl = getLevel(stats.xp || 0);
+  const acc = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0;
+  const mastered = decks.reduce((s, d) => s + d.cards.filter(c => c.reps >= 3).length, 0);
+  const unlocked = (stats.achievements || []).length;
+  const history = stats.dailyHistory || {};
+  const DAYS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const days7 = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); const k = toDate(d); return { v: history[k] || 0, label: k, short: DAYS[d.getDay()] }; });
+  return (
+    <div className="fade-up">
+      <div className="page-title">Estadísticas 📊</div>
+      <div className="page-sub">Tu progreso en MedRecall.</div>
+      <div className="card card-glow" style={{ marginBottom: 16, padding: '20px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 44 }}>{lvl.emoji}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800, background: 'linear-gradient(135deg,var(--g1),var(--g2))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{lvl.name}</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 8 }}>Nivel {lvl.level} · {stats.xp || 0} XP total</div>
+            <div className="xpbar-wrap" style={{ maxWidth: 300 }}><div className="xpbar-fill" style={{ width: `${lvl.progress * 100}%` }} /></div>
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>{(stats.xp || 0) - lvl.xpForCurrent} / {lvl.xpForNext - lvl.xpForCurrent} XP para siguiente nivel</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 36, fontWeight: 800, color: 'var(--orange)' }}>{stats.streak || 0}</div>
+            <div style={{ fontSize: 11, color: 'var(--text3)' }}>racha 🔥</div>
+          </div>
+        </div>
+      </div>
+      <div className="g4" style={{ marginBottom: 16 }}>
+        {[{ l: 'Total', v: fmt(stats.total || 0), i: 'ti-cards', c: 'var(--accent)' }, { l: 'Precisión', v: `${acc}%`, i: 'ti-target', c: 'var(--blue)' }, { l: 'Dominadas', v: mastered, i: 'ti-star', c: 'var(--yellow)' }, { l: 'Logros', v: `${unlocked}/${ACHIEVEMENTS.length}`, i: 'ti-trophy', c: 'var(--purple)' }].map(s => (<div key={s.l} className="statbox"><div className="statbox-label"><i className={`ti ${s.i}`} style={{ color: s.c }} />{s.l}</div><div className="statbox-val">{s.v}</div></div>))}
+      </div>
+      <div className="card" style={{ marginBottom: 16, padding: '18px 22px' }}>
+        <div className="section-title" style={{ marginBottom: 14 }}><i className="ti ti-chart-bar" style={{ color: 'var(--accent)' }} />Actividad — últimos 7 días</div>
+        <BarChart data={days7} />
+        <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8, textAlign: 'center' }}>tarjetas estudiadas por día</div>
+      </div>
+      {decks.length > 0 && (
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div className="section-title"><i className="ti ti-stack" style={{ color: 'var(--accent)' }} />Progreso por mazo</div>
+          {decks.map(deck => { const m = deck.cards.filter(c => c.reps >= 3).length, p = Math.round(m / deck.cards.length * 100), due = deck.cards.filter(isDue).length; return (<div key={deck.id} style={{ marginBottom: 14 }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}><div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><div style={{ width: 22, height: 22, borderRadius: 6, background: deck.pal.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className={`ti ${deck.pal.icon}`} style={{ color: deck.pal.color, fontSize: 11 }} /></div><span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{deck.name}</span>{due > 0 && <span className="due-badge"><i className="ti ti-clock" style={{ fontSize: 9 }} />{due}</span>}</div><span style={{ fontSize: 12, color: 'var(--text2)', fontWeight: 600 }}>{m}/{deck.cards.length} · {p}%</span></div><div style={{ height: 5, background: 'var(--bg3)', borderRadius: 3, overflow: 'hidden' }}><div style={{ height: '100%', width: `${p}%`, background: 'linear-gradient(90deg,var(--g1),var(--g2))', borderRadius: 3, transition: 'width 0.5s ease' }} /></div></div>); })}
+        </div>
+      )}
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div className="section-title" style={{ margin: 0 }}><i className="ti ti-trophy" style={{ color: 'var(--yellow)' }} />Logros</div>
+          <div style={{ fontSize: 12, color: 'var(--text2)' }}>{unlocked}/{ACHIEVEMENTS.length}</div>
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {ACHIEVEMENTS.filter(a => (stats.achievements || []).includes(a.id)).map(a => (<div key={a.id} title={`${a.name} · +${a.xp} XP`} style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--accentbg)', border: '1px solid var(--accentb)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{a.icon}</div>))}
+          {unlocked === 0 && <div style={{ fontSize: 13, color: 'var(--text3)' }}>Estudia para desbloquear logros ✨</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ ACHIEVEMENTS PAGE ══════════════════════════════════════════ */
+function AchievementsPage({ stats }) {
+  const unlocked = new Set(stats.achievements || []);
+  return (
+    <div className="fade-up">
+      <div className="page-title">Logros 🏆</div>
+      <div className="page-sub">{unlocked.size} de {ACHIEVEMENTS.length} · {ACHIEVEMENTS.filter(a => unlocked.has(a.id)).reduce((s, a) => s + a.xp, 0)} XP de logros</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 10 }}>
+        {ACHIEVEMENTS.map(a => {
+          const ok = unlocked.has(a.id);
+          return (<div key={a.id} className={`ach-item${ok ? ' unlocked' : ' locked'}`}><div className="ach-icon">{a.icon}</div><div><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700, color: ok ? 'var(--text)' : 'var(--text3)', marginBottom: 2 }}>{a.name}</div><div style={{ fontSize: 11, color: ok ? 'var(--text2)' : 'var(--text3)', lineHeight: 1.4 }}>{a.desc}</div><div style={{ fontSize: 10, marginTop: 4, color: ok ? 'var(--accent)' : 'var(--text3)', fontWeight: ok ? 700 : 400 }}>+{a.xp} XP {ok && '✓'}</div></div></div>);
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ══ SETTINGS ═══════════════════════════════════════════════════ */
+function Settings({ onClose, apiKey, setApiKey, onReset, stats, setStats }) {
+  const [k, setK] = useState(apiKey), [goal, setGoal] = useState(stats.dailyGoal || 20), [sound, setSound] = useState(stats.sound !== false), [brk, setBrk] = useState(stats.breakEvery || 20);
+  return (
+    <div className="modal-bg" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal fade-up">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>⚙️ Ajustes</div>
+          <button className="btn btn-sm btn-ghost" onClick={onClose}><i className="ti ti-x" /></button>
+        </div>
+        <div style={{ marginBottom: 14 }}><label className="label">Meta diaria: {goal} tarjetas</label><input type="range" min={5} max={100} step={5} value={goal} onChange={e => setGoal(+e.target.value)} style={{ width: '100%', accentColor: 'var(--accent)' }} /></div>
+        <div style={{ marginBottom: 14 }}><label className="label">Pausa activa cada: {brk} tarjetas</label><input type="range" min={10} max={50} step={5} value={brk} onChange={e => setBrk(+e.target.value)} style={{ width: '100%', accentColor: 'var(--accent)' }} /><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Después de {brk} tarjetas se sugiere respiración</div></div>
+        <div style={{ marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'var(--bg3)', borderRadius: 'var(--r2)', border: '1px solid var(--border)' }}>
+          <div><div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>Efectos de sonido</div><div style={{ fontSize: 11, color: 'var(--text3)' }}>Feedback auditivo al estudiar</div></div>
+          <button onClick={() => setSound(s => !s)} style={{ width: 40, height: 22, borderRadius: 11, border: 'none', background: sound ? 'var(--accent)' : 'var(--bg3)', cursor: 'pointer', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}><div style={{ position: 'absolute', top: 3, left: sound ? 20 : 3, width: 16, height: 16, borderRadius: '50%', background: sound ? '#000' : 'var(--text3)', transition: 'left 0.2s' }} /></button>
+        </div>
+        <div style={{ marginBottom: 18 }}><label className="label">API Key de Anthropic</label><input className="input" type="password" value={k} onChange={e => setK(e.target.value)} placeholder="sk-ant-api..." /><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Guardada localmente · <span style={{ color: 'var(--blue)' }}>console.anthropic.com</span></div></div>
+        <div className="divider" />
+        <div style={{ marginBottom: 16 }}><label className="label">Zona de peligro</label><button className="btn btn-red btn-sm" onClick={() => { if (confirm('¿Borrar TODOS los datos? No se puede deshacer.')) onReset(); }}><i className="ti ti-trash" />Borrar todos los datos</button></div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <button className="btn btn-sm btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-sm btn-accent" onClick={() => { setApiKey(k); setStats(s => ({ ...s, dailyGoal: goal, sound, breakEvery: brk })); onClose(); }}><i className="ti ti-check" />Guardar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ DASHBOARD ══════════════════════════════════════════════════ */
+function Dashboard({ decks, stats, onGo, onNav, onDelete, onStartAll, onQuickAdd, onBrowse, onMix }) {
+  const acc = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0;
+  const allDue = useMemo(() => decks.reduce((s, d) => s + d.cards.filter(isDue).length, 0), [decks]);
+  const lvl = getLevel(stats.xp || 0);
+  const DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'], MAPPED = [1, 2, 3, 4, 5, 6, 0], todayDow = new Date().getDay();
+  const goal = stats.dailyGoal || 20, todayDone = stats.today || 0;
+  const h = new Date().getHours(), greet = h < 12 ? '🌤 Buenos días' : h < 19 ? '☀️ Buenas tardes' : '🌙 Buenas noches';
+  const mixAvail = decks.reduce((s, d) => s + d.cards.length, 0) >= 2;
+  return (
+    <div className="fade-up">
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 22, flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 23, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 6 }}>{greet} 🩺</div>
+          <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 14 }}>{allDue > 0 ? `${allDue} tarjeta${allDue > 1 ? 's' : ''} esperan tu repaso.` : decks.length > 0 ? '¡Al corriente! Sin pendientes.' : 'Importa o genera tu primer mazo.'}</div>
+          <div style={{ maxWidth: 260 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}><span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text2)' }}>{lvl.emoji} {lvl.name}</span><span style={{ fontSize: 11, color: 'var(--text3)' }}>{stats.xp || 0} XP</span></div>
+            <div className="xpbar-wrap"><div className="xpbar-fill" style={{ width: `${lvl.progress * 100}%` }} /></div>
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>Próximo nivel: {lvl.xpForNext} XP</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+          <GoalRing current={todayDone} total={goal} size={110} />
+          <div style={{ fontSize: 11, color: 'var(--text3)' }}>meta diaria</div>
+          {todayDone >= goal && <div style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 700 }}>🎯 ¡Meta!</div>}
+        </div>
+      </div>
+      {decks.length > 0 && (
+        <div style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap' }}>
+          <button className="btn btn-accent btn-xl" style={{ flex: '2 1 200px', fontSize: 16, justifyContent: 'center' }} onClick={onStartAll}>
+            <i className="ti ti-brain" style={{ fontSize: 20 }} />{allDue > 0 ? `Empezar — ${allDue} pendiente${allDue > 1 ? 's' : ''}` : 'Empezar sesión'}
+          </button>
+          {mixAvail && <button className="btn btn-purple btn-lg" style={{ flex: '1 1 130px', justifyContent: 'center' }} onClick={onMix}><i className="ti ti-shuffle" />Mix Mode</button>}
+          <button className="btn btn-ghost btn-lg" style={{ flex: '1 1 110px', justifyContent: 'center' }} onClick={onQuickAdd}><i className="ti ti-plus" />Añadir</button>
+        </div>
+      )}
+      <div className="g4" style={{ marginBottom: 16 }}>
+        {[{ l: 'Racha', v: `${stats.streak || 0}d`, s: 'días', i: 'ti-flame', c: 'var(--orange)' }, { l: 'Hoy', v: todayDone, s: 'tarjetas', i: 'ti-cards', c: 'var(--accent)' }, { l: 'Precisión', v: `${acc}%`, s: 'correctas', i: 'ti-target', c: 'var(--blue)' }, { l: 'Pendientes', v: allDue, s: 'para hoy', i: 'ti-clock', c: allDue > 0 ? 'var(--red)' : 'var(--accent)' }].map(s => (<div key={s.l} className="statbox"><div className="statbox-label"><i className={`ti ${s.i}`} style={{ color: s.c }} />{s.l}</div><div className="statbox-val">{s.v}</div><div className="statbox-sub">{s.s}</div></div>))}
+      </div>
+      <div className="card" style={{ marginBottom: 16, padding: '16px 20px' }}>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text3)', marginBottom: 10 }}>Racha semanal</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {DAYS.map((d, i) => { const isT = MAPPED[i] === todayDow, done = stats.history && stats.history[i]; return (<div key={d} style={{ width: 36, height: 36, borderRadius: 9, background: isT ? 'var(--accentbg)' : done ? 'linear-gradient(135deg,#00e87a,#00b85f)' : 'var(--bg3)', border: isT ? '2px solid var(--accent)' : '1.5px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: isT ? 'var(--accent)' : done ? '#000' : 'var(--text3)' }}>{d}</div>); })}
+        </div>
+      </div>
+      {allDue > 0 && (
+        <div style={{ marginBottom: 22 }}>
+          <div className="section-title"><i className="ti ti-clock-hour-4" style={{ color: 'var(--orange)' }} />Repasar ahora</div>
+          <div className="g2">
+            {decks.filter(d => d.cards.some(isDue)).map(deck => { const due = deck.cards.filter(isDue).length; return (<div key={deck.id} className="card card-hover" onClick={() => onGo(deck, 'recall')} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '14px 16px' }}><div style={{ width: 38, height: 38, borderRadius: 10, background: deck.pal.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><i className={`ti ${deck.pal.icon}`} style={{ color: deck.pal.color, fontSize: 18 }} /></div><div style={{ flex: 1, minWidth: 0 }}><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deck.name}</div><div style={{ fontSize: 11, color: 'var(--orange)', fontWeight: 600, marginTop: 1 }}>{due} pendiente{due > 1 ? 's' : ''}</div></div><i className="ti ti-arrow-right" style={{ color: 'var(--text3)' }} /></div>); })}
+          </div>
+        </div>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <div className="section-title" style={{ margin: 0 }}>Mis mazos</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button className="btn btn-sm btn-ghost" onClick={() => onNav('import')}><i className="ti ti-upload" />CSV</button>
+          <button className="btn btn-sm btn-purple" onClick={() => onNav('generate')}><i className="ti ti-sparkles" />Generar IA</button>
+        </div>
+      </div>
+      {decks.length === 0 ? (
+        <div className="card"><div className="empty"><i className="ti ti-cards empty-icon" /><div className="empty-title">Sin mazos todavía</div><div className="empty-sub">Importa un CSV con tus apuntes o genera uno con IA.<br />Empieza hoy — la racha empieza con el primer paso.</div><div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}><button className="btn btn-accent btn-lg" onClick={() => onNav('import')}><i className="ti ti-upload" />Importar CSV</button><button className="btn btn-purple btn-lg" onClick={() => onNav('generate')}><i className="ti ti-sparkles" />Generar IA</button></div></div></div>
+      ) : (
+        <div className="g2">
+          {decks.map(deck => {
+            const due = deck.cards.filter(isDue).length, mastered = deck.cards.filter(c => c.reps >= 3).length, pct = Math.round(mastered / deck.cards.length * 100);
+            return (
+              <div key={deck.id} className="deck-card">
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div className="deck-icon" style={{ background: deck.pal.bg }}><i className={`ti ${deck.pal.icon}`} style={{ color: deck.pal.color, fontSize: 20 }} /></div>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    <button onClick={() => onBrowse(deck)} className="btn btn-xs btn-ghost" title="Ver tarjetas"><i className="ti ti-list" /></button>
+                    <button onClick={() => onDelete(deck.id)} className="btn btn-xs btn-ghost" title="Eliminar"><i className="ti ti-trash" /></button>
+                  </div>
+                </div>
+                <div className="deck-name">{deck.name}</div>
+                <div className="deck-meta">{deck.cards.length} tarjetas{due > 0 && <span className="due-badge" style={{ marginLeft: 6 }}><i className="ti ti-clock" style={{ fontSize: 9 }} />{due}</span>}</div>
+                <div style={{ marginBottom: 13 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text3)', marginBottom: 4 }}><span>{mastered} dominadas</span><span>{pct}%</span></div>
+                  <div style={{ height: 4, background: 'var(--bg3)', borderRadius: 2, overflow: 'hidden' }}><div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg,var(--g1),var(--g2))', borderRadius: 2, transition: 'width 0.5s ease' }} /></div>
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <button className="btn btn-xs btn-blue" onClick={() => onGo(deck, 'recall')}><i className="ti ti-brain" />Recall</button>
+                  <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'flash')}><i className="ti ti-cards" />Flash</button>
+                  <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'quiz')}><i className="ti ti-help-circle" />Quiz</button>
+                  <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'sprint')}><i className="ti ti-bolt" />Sprint</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+/* ══ RECALL HUB ═════════════════════════════════════════════════ */
+function RecallHub({ decks, onGo, onNav }) {
+  if (!decks.length) return (<div className="fade-up"><div className="page-title">Active Recall</div><div className="card"><div className="empty"><i className="ti ti-brain empty-icon" /><div className="empty-title">Sin mazos</div><div className="empty-sub">Importa o genera un mazo primero.</div><div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}><button className="btn btn-accent" onClick={() => onNav('import')}><i className="ti ti-upload" />Importar</button><button className="btn btn-purple" onClick={() => onNav('generate')}><i className="ti ti-sparkles" />Generar</button></div></div></div></div>);
+  return (
+    <div className="fade-up">
+      <div className="page-title">Active Recall</div>
+      <div className="page-sub">Lee la pregunta, intenta recordar, revela y autoevalúate. SM-2 programa el próximo repaso automáticamente.</div>
+      <div className="card card-glow" style={{ marginBottom: 20, padding: '14px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
+        <div style={{ fontSize: 26 }}>🔬</div>
+        <div><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: 'var(--accent)', marginBottom: 3 }}>¿Por qué Active Recall?</div><div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>Recuperar activamente es <b style={{ color: 'var(--text)' }}>2–3× más efectivo</b> que releer. SM-2 espacia los repasos: fáciles en días, difíciles en horas.</div></div>
+      </div>
+      <div className="g2">
+        {decks.map(deck => {
+          const due = deck.cards.filter(isDue).length, mastered = deck.cards.filter(c => c.reps >= 3).length, pct = Math.round(mastered / deck.cards.length * 100);
+          return (<div key={deck.id} className="deck-card card-hover" onClick={() => onGo(deck, 'recall')}><div className="deck-icon" style={{ background: deck.pal.bg }}><i className={`ti ${deck.pal.icon}`} style={{ color: deck.pal.color, fontSize: 21 }} /></div><div className="deck-name">{deck.name}</div><div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 10 }}>{deck.cards.length} tarjetas · {mastered} dominadas</div><div style={{ marginBottom: 12 }}>{due > 0 ? <span className="chip chip-orange"><i className="ti ti-clock" />{due} pendiente{due > 1 ? 's' : ''}</span> : <span className="chip chip-green"><i className="ti ti-check" />Al corriente</span>}</div><div style={{ height: 4, background: 'var(--bg3)', borderRadius: 2, overflow: 'hidden', marginBottom: 4 }}><div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg,var(--g1),var(--g2))', borderRadius: 2 }} /></div><div style={{ fontSize: 10, color: 'var(--text3)' }}>{pct}% dominado</div></div>);
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ══ SESSION SELECTOR ═══════════════════════════════════════════ */
+function SessionSelector({ deck, onStart, onBack, isMix }) {
+  const dueCards = useMemo(() => shuffle(deck.cards.filter(isDue)), [deck.id]);
+  const pool = dueCards.length > 0 ? dueCards : shuffle(deck.cards);
+  const opts = [...new Set([5, 10, 20, pool.length].filter(v => v > 0 && v <= pool.length))].map(n => ({ n, time: `~${Math.max(1, Math.round(n * 0.5))} min` }));
+  return (
+    <div className="fade-up">
+      <button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--text)' }}>{isMix ? '🌀 Mix Mode' : deck.name}</div>
+        {isMix && <span className="mix-badge">todos los mazos</span>}
+      </div>
+      <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 24 }}>{dueCards.length > 0 ? `${dueCards.length} tarjeta${dueCards.length > 1 ? 's' : ''} pendiente${dueCards.length > 1 ? 's' : ''} hoy` : 'Sin pendientes — practicarás todas'}</div>
+      <div className="card card-lg">
+        <label className="label" style={{ marginBottom: 14 }}>¿Cuántas tarjetas estudiar?</label>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${opts.length},1fr)`, gap: 10, marginBottom: 20 }}>
+          {opts.map(({ n, time }) => (<div key={n} className="scard" onClick={() => onStart(pool.slice(0, n))}><div className="scard-val">{n === pool.length ? '∞' : n}</div><div className="scard-lbl">{n === pool.length ? 'todas' : 'tarjetas'}</div><div className="scard-time">{time}</div></div>))}
+        </div>
+        <div className="divider" />
+        <div style={{ fontSize: 12, color: 'var(--text3)', display: 'flex', alignItems: 'center', gap: 6 }}><i className="ti ti-keyboard" />Atajos: <span className="kbd">Ctrl+↵</span> revelar · <span className="kbd">1</span><span className="kbd">2</span><span className="kbd">3</span> calificar · <span className="kbd">Ctrl+F</span> foco</div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ RECALL CARDS ═══════════════════════════════════════════════ */
+function RecallCards({ deck, cards, onBack, onUpdateDeck, addStudied, soundOn, breakEvery }) {
+  const [idx, setIdx] = useState(0);
+  const [phase, setPhase] = useState('q');
+  const [answer, setAnswer] = useState('');
+  const [res, setRes] = useState([]);
+  const [finished, setFinished] = useState(false);
+  const [momentum, setMomentum] = useState(0);
+  const [focusMode, setFocusMode] = useState(false);
+  const [showBreak, setShowBreak] = useState(false);
+  const taRef = useRef(null);
+  const t0 = useRef(Date.now());
+
+  const card = cards[idx];
+
+  useEffect(() => { if (phase === 'q' && taRef.current) taRef.current.focus(); }, [phase, idx]);
+
+  useEffect(() => {
+    const h = e => {
+      if (phase === 'q' && (e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); reveal(); }
+      if (phase === 'a') { if (e.key === '1') rate(0); else if (e.key === '2') rate(1); else if (e.key === '3') rate(2); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); setFocusMode(m => !m); }
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [phase, idx, answer, focusMode]);
+
+  const reveal = () => setPhase('a');
+
+  const rate = q => {
+    if (soundOn) SFX.play(q === 2 ? 'correct' : q === 0 ? 'wrong' : 'flip');
+    const xp = q === 2 ? 15 : q === 1 ? 8 : 3;
+    addStudied(q === 2, xp);
+    setRes(r => [...r, { id: card.id, q }]);
+    onUpdateDeck({ ...deck, cards: deck.cards.map(c => c.id === card.id ? sm2(card, q) : c) });
+    if (q === 2) setMomentum(m => m + 1); else setMomentum(0);
+    const next = idx + 1;
+    if (next >= cards.length) { setFinished(true); confettiBlast(); return; }
+    if (breakEvery > 0 && next % breakEvery === 0) { setShowBreak(true); return; }
+    setAnswer(''); setPhase('q'); setIdx(next);
+  };
+
+  const afterBreak = () => { setShowBreak(false); setAnswer(''); setPhase('q'); setIdx(i => i + 1); };
+
+  if (showBreak) return <BrainBreak onDone={afterBreak} />;
+
+  if (finished || !card) {
+    const perf = res.filter(r => r.q === 2).length, part = res.filter(r => r.q === 1).length, fail = res.filter(r => r.q === 0).length;
+    const pct = res.length ? Math.round(perf / res.length * 100) : 0;
+    const min = Math.max(1, Math.round((Date.now() - t0.current) / 60000));
+    return (
+      <div className="fade-up">
+        <button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button>
+        <div className="card card-lg" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 56, marginBottom: 14 }}>{pct >= 90 ? '🧠' : pct >= 70 ? '💪' : '📖'}</div>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>¡Sesión completada!</div>
+          <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 26 }}>{cards.length} tarjetas · {min} min</div>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 28, flexWrap: 'wrap' }}>
+            {[{ v: pct + '%', l: 'recall', c: 'var(--accent)', bg: 'var(--accentbg)' }, { v: perf, l: 'completo', c: 'var(--accent)', bg: 'var(--accentbg)' }, { v: part, l: 'parcial', c: 'var(--orange)', bg: 'var(--orangebg)' }, { v: fail, l: 'no recordé', c: 'var(--red)', bg: 'var(--redbg)' }].map(s => (<div key={s.l} style={{ background: s.bg, borderRadius: 14, padding: '12px 16px', textAlign: 'center', minWidth: 80 }}><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 24, fontWeight: 800, color: s.c }}>{s.v}</div><div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{s.l}</div></div>))}
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-accent btn-lg" onClick={() => { setIdx(0); setPhase('q'); setAnswer(''); setRes([]); setFinished(false); setMomentum(0); t0.current = Date.now(); }}><i className="ti ti-refresh" />Repetir</button>
+            <button className="btn btn-lg btn-ghost" onClick={onBack}><i className="ti ti-home" />Inicio</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const inner = (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <button className="btn btn-sm btn-ghost" onClick={onBack}><i className="ti ti-arrow-left" />Volver</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {momentum >= 3 && <div className="momentum"><i className="ti ti-flame" />{momentum}</div>}
+          <span className="chip chip-blue"><i className="ti ti-brain" />Recall</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text3)', fontFamily: "'Syne',sans-serif" }}>{idx + 1}/{cards.length}</span>
+          <button className="btn btn-xs btn-ghost" onClick={() => setFocusMode(m => !m)} title="Modo foco (Ctrl+F)"><i className="ti ti-maximize" /></button>
+        </div>
+      </div>
+      <div className="pbar"><div className="pbar-fill" style={{ width: `${Math.round(idx / cards.length * 100)}%` }} /></div>
+      <div className={`recall-card${phase === 'a' ? ' revealed' : ''}`}>
+        <div className="fc-eyebrow"><i className="ti ti-help-circle" />Pregunta</div>
+        <div style={{ fontSize: 19, lineHeight: 1.65, color: 'var(--text)', fontWeight: 500, maxWidth: 580 }}>{card.q}</div>
+        {card.reps > 0 && <div style={{ position: 'absolute', top: 12, right: 14, fontSize: 10, color: 'var(--text3)' }}>Rep.{card.reps}{card.reps >= 3 ? ' ⭐' : ''}</div>}
+        {card.deckName && <div style={{ position: 'absolute', bottom: 10, left: 14 }}><span className="mix-badge">{card.deckName}</span></div>}
+      </div>
+      {phase === 'q' ? (
+        <>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 7, display: 'flex', alignItems: 'center', gap: 6 }}><i className="ti ti-pencil" />Intenta recordar antes de revelar <span className="kbd">Ctrl+↵</span></div>
+            <textarea ref={taRef} className="input" rows={3} value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Escribe tu respuesta... (o deja vacío y solo piensa)" />
+          </div>
+          <button className="btn btn-accent btn-full btn-lg" onClick={reveal}><i className="ti ti-eye" />Revelar respuesta</button>
+        </>
+      ) : (
+        <>
+          {answer.trim() && (<div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '12px 16px', marginBottom: 12, borderLeft: '3px solid var(--text3)' }}><div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 700 }}>Tu respuesta</div><div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6 }}>{answer}</div></div>)}
+          <div className="revealed-box"><div style={{ fontSize: 10, color: 'var(--accent)', marginBottom: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-bulb" />Respuesta correcta</div><div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.75 }}>{card.a}</div></div>
+          <div>
+            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 7 }}><i className="ti ti-scale" />¿Qué tan bien la recordaste? <span className="kbd">1</span><span className="kbd">2</span><span className="kbd">3</span></div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[{ q: 0, label: 'No recordé', sub: '+1 día', c: 'var(--red)', bg: 'var(--redbg)', bd: 'var(--redb)', icon: 'ti-x' }, { q: 1, label: 'Parcial', sub: 'pronto', c: 'var(--orange)', bg: 'var(--orangebg)', bd: 'var(--orangeb)', icon: 'ti-minus' }, { q: 2, label: 'Completo', sub: `+${sm2(card, 2).interval}d`, c: 'var(--accent)', bg: 'var(--accentbg)', bd: 'var(--accentb)', icon: 'ti-check' }].map(r => (<button key={r.q} className="rate-btn" onClick={() => rate(r.q)} style={{ background: r.bg, borderColor: r.bd, color: r.c }}><i className={`ti ${r.icon}`} /><span>{r.label}</span><span className="rate-sub">{r.sub}</span></button>))}
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+
+  if (focusMode) return (
+    <div className="focus-overlay">
+      <button className="focus-exit-btn btn btn-sm btn-ghost" onClick={() => setFocusMode(false)}><i className="ti ti-minimize" />Salir del foco</button>
+      <div style={{ maxWidth: 680, margin: '0 auto', width: '100%', paddingTop: 20 }}>{inner}</div>
+    </div>
+  );
+
+  return <div className="fade-up">{inner}</div>;
+}
+
+/* ══ RECALL SESSION WRAPPER ═════════════════════════════════════ */
+function RecallSession({ deck, onBack, onUpdateDeck, addStudied, soundOn, breakEvery }) {
+  const [cards, setCards] = useState(null);
+  if (!cards) return <SessionSelector deck={deck} onStart={setCards} onBack={onBack} isMix={deck.id === 'mix'} />;
+  return <RecallCards deck={deck} cards={cards} onBack={onBack} onUpdateDeck={onUpdateDeck} addStudied={addStudied} soundOn={soundOn} breakEvery={breakEvery} />;
+}
+
+/* ══ FLASHCARDS ═════════════════════════════════════════════════ */
+function Flashcards({ deck, onBack, onUpdateDeck, addStudied, soundOn }) {
+  const cards = useMemo(() => shuffle(deck.cards), [deck.id]);
+  const [idx, setIdx] = useState(0);
+  const [flip, setFlip] = useState(false);
+  const [done, setDone] = useState([]);
+  const [hard, setHard] = useState(0);
+  const [momentum, setMomentum] = useState(0);
+  const card = cards[idx];
+
+  useEffect(() => {
+    const h = e => {
+      if (e.key === ' ') { e.preventDefault(); if (soundOn) SFX.play('flip'); setFlip(f => !f); }
+      if (flip) { if (e.key === 'ArrowRight') rate(true); else if (e.key === 'ArrowLeft') rate(false); }
+    };
+    window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
+  }, [flip, idx, done, soundOn]);
+
+  if (done.length === cards.length) {
+    confettiBlast();
+    return (
+      <div className="fade-up">
+        <button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button>
+        <div className="card card-lg" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 56, marginBottom: 14 }}>🎉</div>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>¡Mazo completado!</div>
+          <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 24 }}>{hard > 0 ? `${hard} difícil${hard > 1 ? 'es' : ''} — vuelve a repasar.` : '¡Sin difíciles! Excelente.'}</div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-accent btn-lg" onClick={() => { setIdx(0); setFlip(false); setDone([]); setHard(0); setMomentum(0); }}><i className="ti ti-refresh" />Repetir</button>
+            <button className="btn btn-lg btn-ghost" onClick={onBack}><i className="ti ti-home" />Inicio</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const rate = easy => {
+    if (soundOn) SFX.play(easy ? 'correct' : 'wrong');
+    addStudied(easy, easy ? 15 : 5);
+    if (!easy) { setHard(h => h + 1); setMomentum(0); } else setMomentum(m => m + 1);
+    onUpdateDeck({ ...deck, cards: deck.cards.map(c => c.id === card.id ? sm2(card, easy ? 2 : 0) : c) });
+    setDone(d => [...d, idx]); setFlip(false);
+    const nx = cards.findIndex((_, i) => i > idx && !done.includes(i));
+    const fb = cards.findIndex((_, i) => !done.includes(i) && i !== idx);
+    setTimeout(() => setIdx(nx === -1 ? fb : nx), 80);
+  };
+
+  return (
+    <div className="fade-up">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <button className="btn btn-sm btn-ghost" onClick={onBack}><i className="ti ti-arrow-left" />Volver</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {momentum >= 3 && <div className="momentum"><i className="ti ti-flame" />{momentum}</div>}
+          <span className="chip chip-purple"><i className="ti ti-cards" />Flashcards</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text3)', fontFamily: "'Syne',sans-serif" }}>{done.length + 1}/{cards.length}</span>
+        </div>
+      </div>
+      <div className="pbar"><div className="pbar-fill" style={{ width: `${Math.round(done.length / cards.length * 100)}%` }} /></div>
+      <div className="fc-scene" onClick={() => { if (soundOn) SFX.play('flip'); setFlip(f => !f); }}>
+        <div className={`fc-inner${flip ? ' flipped' : ''}`}>
+          <div className="fc-face"><div className="fc-eyebrow"><i className="ti ti-question-mark" />Pregunta · <span className="kbd">Espacio</span></div><div className="fc-q">{card.q}</div></div>
+          <div className="fc-face back"><div className="fc-eyebrow" style={{ color: 'var(--accent)' }}><i className="ti ti-bulb" />Respuesta</div><div className="fc-a">{card.a}</div></div>
+        </div>
+      </div>
+      {flip ? (
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-red btn-full btn-lg" onClick={() => rate(false)}><i className="ti ti-x" /><span style={{ flex: 1, textAlign: 'center' }}>Difícil</span><span className="kbd" style={{ opacity: 0.5 }}>←</span></button>
+          <button className="btn btn-green btn-full btn-lg" onClick={() => rate(true)}><span className="kbd" style={{ opacity: 0.5 }}>→</span><span style={{ flex: 1, textAlign: 'center' }}>Lo sabía</span><i className="ti ti-check" /></button>
+        </div>
+      ) : (<div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><i className="ti ti-hand-click" />Toca para revelar</div>)}
+      {hard > 0 && <div style={{ marginTop: 14, textAlign: 'center' }}><span className="chip chip-red"><i className="ti ti-alert-triangle" />{hard} difícil{hard > 1 ? 'es' : ''}</span></div>}
+    </div>
+  );
+}
+
+/* ══ QUIZ ═══════════════════════════════════════════════════════ */
+function buildQ(card, all) {
+  const ok = card.a;
+  // Si la tarjeta ya tiene opciones predefinidas (del CSV), usarlas directamente
+  if (card.opts && card.opts.length >= 2) {
+    return { q: card.q, ok, opts: shuffle(card.opts), expl: card.expl || '' };
+  }
+  // Si no, generar opciones a partir de otras tarjetas del mazo
+  const others = shuffle(all.filter(c => c.a !== ok)).slice(0, 3).map(c => c.a);
+  return { q: card.q, ok, opts: shuffle([ok, ...others]), expl: '' };
+}
+
+function Quiz({ deck, onBack, addStudied, soundOn, onPerfect }) {
+  const cards = useMemo(() => shuffle(deck.cards), [deck.id]);
+  const [qi, setQi] = useState(0), [sel, setSel] = useState(null), [score, setScore] = useState(0), [done, setDone] = useState(false);
+  const q = useMemo(() => buildQ(cards[qi], deck.cards), [qi]);
+
+  useEffect(() => {
+    const h = e => {
+      if (!sel && ['1', '2', '3', '4'].includes(e.key)) { const i = +e.key - 1; if (q.opts[i]) pick(q.opts[i]); }
+      if (sel && e.key === 'Enter') next();
+    };
+    window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
+  }, [sel, q, qi]);
+
+  const pick = opt => { if (sel) return; setSel(opt); const ok = opt === q.ok; if (soundOn) SFX.play(ok ? 'correct' : 'wrong'); addStudied(ok, ok ? 15 : 3); if (ok) setScore(s => s + 1); };
+  const next = () => { if (qi + 1 >= cards.length) { setDone(true); confettiBlast(); if (score + 1 === cards.length) onPerfect(); return; } setQi(i => i + 1); setSel(null); };
+
+  if (done) {
+    const pct = Math.round(score / cards.length * 100);
+    return (
+      <div className="fade-up">
+        <button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button>
+        <div className="card card-lg" style={{ textAlign: 'center' }}>
+          <div className="score-ring" style={{ borderColor: pct >= 70 ? 'var(--accent)' : pct >= 50 ? 'var(--orange)' : 'var(--red)' }}>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 24, fontWeight: 800, color: 'var(--text)' }}>{pct}%</div>
+            <div style={{ fontSize: 10, color: 'var(--text3)' }}>precisión</div>
+          </div>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>{pct >= 90 ? '¡Perfecto! 🏆' : pct >= 70 ? '¡Excelente! 💪' : pct >= 50 ? '¡Buen trabajo! 📖' : 'Sigue practicando 💡'}</div>
+          <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 26 }}>{score} de {cards.length} correctas · {deck.name}</div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-accent btn-lg" onClick={() => { setQi(0); setSel(null); setScore(0); setDone(false); }}><i className="ti ti-refresh" />Repetir</button>
+            <button className="btn btn-lg btn-ghost" onClick={onBack}><i className="ti ti-home" />Inicio</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-up">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <button className="btn btn-sm btn-ghost" onClick={onBack}><i className="ti ti-arrow-left" />Volver</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span className="chip chip-orange"><i className="ti ti-help-circle" />Quiz</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text3)', fontFamily: "'Syne',sans-serif" }}>{qi + 1}/{cards.length} · {score}✓</span>
+        </div>
+      </div>
+      <div className="pbar"><div className="pbar-fill" style={{ width: `${Math.round(qi / cards.length * 100)}%` }} /></div>
+      <div className="card card-lg" style={{ marginBottom: 14 }}>
+        <div className="fc-eyebrow" style={{ justifyContent: 'center' }}><i className="ti ti-help-circle" />Pregunta</div>
+        <div style={{ fontSize: 18, lineHeight: 1.65, color: 'var(--text)', fontWeight: 500, textAlign: 'center' }}>{q.q}</div>
+      </div>
+      <div>
+        {q.opts.map((opt, i) => {
+          let cls = 'qopt'; if (sel) cls += opt === q.ok ? ' correct' : opt === sel ? ' wrong' : '';
+          return (<button key={i} className={cls} onClick={() => pick(opt)} disabled={!!sel}><div className="qopt-key">{i + 1}</div><span style={{ flex: 1 }}>{opt}</span>{sel && opt === q.ok && <i className="ti ti-check" style={{ color: 'var(--accent)' }} />}{sel && opt === sel && opt !== q.ok && <i className="ti ti-x" style={{ color: 'var(--red)' }} />}</button>);
+        })}
+      </div>
+      {sel && q.expl && (
+        <div style={{ marginTop: 10, padding: '12px 16px', background: 'var(--bluebg)', border: '1px solid var(--blueb)', borderRadius: 'var(--r2)', borderLeft: '3px solid var(--blue)' }}>
+          <div style={{ fontSize: 10, color: 'var(--blue)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5, display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-info-circle" />Explicación</div>
+          <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>{q.expl}</div>
+        </div>
+      )}
+      {sel && <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 14 }}><button className="btn btn-accent btn-lg" onClick={next}>{qi + 1 < cards.length ? 'Siguiente' : 'Ver resultados'} <i className="ti ti-arrow-right" /></button></div>}
+      {sel && <div style={{ fontSize: 11, color: 'var(--text3)', textAlign: 'center', marginTop: 8 }}><span className="kbd">↵</span> continuar</div>}
+    </div>
+  );
+}
+
+/* ══ SPRINT ══════════════════════════════════════════════════════ */
+function SprintMode({ deck, onBack, addStudied, soundOn, onSprintDone }) {
+  const DUR = 5 * 60;
+  const cards = useMemo(() => shuffle([...deck.cards]), [deck.id]);
+  const [sec, setSec] = useState(DUR), [qi, setQi] = useState(0), [started, setStarted] = useState(false);
+  const [count, setCount] = useState(0), [correct, setCorrect] = useState(0), [done, setDone] = useState(false), [flip, setFlip] = useState(false);
+  const card = cards[qi % Math.max(1, cards.length)];
+
+  useEffect(() => {
+    if (!started || done) return;
+    const t = setInterval(() => setSec(s => { if (s <= 1) { setDone(true); onSprintDone(); confettiBlast(); return 0; } return s - 1; }), 1000);
+    return () => clearInterval(t);
+  }, [started, done]);
+
+  useEffect(() => {
+    if (!started || done) return;
+    const h = e => {
+      if (e.key === ' ') { e.preventDefault(); if (soundOn) SFX.play('flip'); setFlip(f => !f); }
+      if (flip) { if (e.key === 'ArrowRight') answer(true); else if (e.key === 'ArrowLeft') answer(false); }
+    };
+    window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
+  }, [started, done, flip, soundOn]);
+
+  const m = String(~~(sec / 60)).padStart(2, '0'), s = String(sec % 60).padStart(2, '0');
+  const answer = ok => { if (soundOn) SFX.play(ok ? 'correct' : 'wrong'); addStudied(ok, ok ? 20 : 5); setCount(c => c + 1); if (ok) setCorrect(c => c + 1); setFlip(false); setQi(i => i + 1); };
+
+  if (done) {
+    const pct = count > 0 ? Math.round(correct / count * 100) : 0;
+    return (<div className="fade-up"><button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button><div className="card card-lg" style={{ textAlign: 'center' }}><div style={{ fontSize: 56, marginBottom: 14 }}>⚡</div><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>¡Sprint completado!</div><div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 26 }}>5 minutos · {deck.name}</div><div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 28, flexWrap: 'wrap' }}>{[{ v: count, l: 'tarjetas', c: 'var(--accent)', bg: 'var(--accentbg)' }, { v: correct, l: 'correctas', c: 'var(--accent)', bg: 'var(--accentbg)' }, { v: pct + '%', l: 'precisión', c: 'var(--purple)', bg: 'var(--purplebg)' }].map(s => (<div key={s.l} style={{ background: s.bg, borderRadius: 14, padding: '14px 20px', textAlign: 'center', minWidth: 90 }}><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 24, fontWeight: 800, color: s.c }}>{s.v}</div><div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{s.l}</div></div>))}</div><div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}><button className="btn btn-accent btn-lg" onClick={() => { setSec(DUR); setStarted(false); setCount(0); setCorrect(0); setDone(false); setQi(0); setFlip(false); }}><i className="ti ti-refresh" />Otro sprint</button><button className="btn btn-lg btn-ghost" onClick={onBack}><i className="ti ti-home" />Inicio</button></div></div></div>);
+  }
+  if (!started) return (<div className="fade-up"><button className="btn btn-sm btn-ghost" onClick={onBack} style={{ marginBottom: 22 }}><i className="ti ti-arrow-left" />Volver</button><div className="card card-lg" style={{ textAlign: 'center' }}><div style={{ fontSize: 52, marginBottom: 14 }}>⚡</div><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Sprint Mode</div><div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 8, lineHeight: 1.6 }}>5 minutos. La mayor cantidad de tarjetas posible.<br />Perfecto para activar el cerebro antes de clase.</div><div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 28 }}><span className="kbd">Espacio</span> voltear · <span className="kbd">←</span><span className="kbd">→</span> calificar</div><button className="btn btn-accent btn-xl btn-full" onClick={() => setStarted(true)}><i className="ti ti-bolt" />¡Empezar Sprint!</button></div></div>);
+
+  return (
+    <div className="fade-up">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <button className="btn btn-sm btn-ghost" onClick={() => { if (confirm('¿Salir del sprint?')) onBack(); }}><i className="ti ti-x" />Salir</button>
+        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: sec < 30 ? 'var(--red)' : 'var(--text3)' }}>{count} tarjetas</div>
+      </div>
+      <div style={{ textAlign: 'center', marginBottom: 20 }}>
+        <div className="sprint-timer" style={sec < 30 ? { WebkitTextFillColor: 'var(--red)', color: 'var(--red)' } : {}}>{m}:{s}</div>
+        <div style={{ fontSize: 12, color: 'var(--text3)' }}>restantes</div>
+      </div>
+      <div className="fc-scene" onClick={() => { if (soundOn) SFX.play('flip'); setFlip(f => !f); }}>
+        <div className={`fc-inner${flip ? ' flipped' : ''}`}>
+          <div className="fc-face"><div className="fc-eyebrow"><i className="ti ti-bolt" />Sprint · <span className="kbd">Espacio</span></div><div className="fc-q">{card.q}</div></div>
+          <div className="fc-face back"><div className="fc-eyebrow" style={{ color: 'var(--accent)' }}><i className="ti ti-bulb" />Respuesta</div><div className="fc-a">{card.a}</div></div>
+        </div>
+      </div>
+      {flip ? (<div style={{ display: 'flex', gap: 10 }}><button className="btn btn-red btn-full btn-lg" onClick={() => answer(false)}><i className="ti ti-x" /><span style={{ flex: 1, textAlign: 'center' }}>Difícil</span><span className="kbd" style={{ opacity: 0.5 }}>←</span></button><button className="btn btn-green btn-full btn-lg" onClick={() => answer(true)}><span className="kbd" style={{ opacity: 0.5 }}>→</span><span style={{ flex: 1, textAlign: 'center' }}>Lo sabía</span><i className="ti ti-check" /></button></div>) : (<div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><i className="ti ti-hand-click" />Toca para voltear</div>)}
+    </div>
+  );
+}
+/* ══ IMPORT CSV ═════════════════════════════════════════════════ */
+function ImportCSV({ onDeckCreated }) {
+  const [tab, setTab] = useState('flash'), [txt, setTxt] = useState(''), [name, setName] = useState(''), [preview, setPreview] = useState(null), [err, setErr] = useState(''), [over, setOver] = useState(false), [copied, setCopied] = useState(false);
+  const fileRef = useRef(null);
+  const parse = (t, type) => { setErr(''); const cards = type === 'flash' ? parseFlashCSV(t) : parseQuizCSV(t); if (!cards.length) { setErr('Sin filas válidas. Revisa el formato.'); setPreview(null); } else setPreview({ cards, type }); };
+  const onFile = f => { if (!f) return; const r = new FileReader(); r.onload = e => { setTxt(e.target.result); parse(e.target.result, tab); }; r.readAsText(f); };
+  const onDrop = e => { e.preventDefault(); setOver(false); onFile(e.dataTransfer.files[0]); };
+  const TMPL_F = `pregunta,respuesta\n"¿Qué son los beta-bloqueadores?","Bloquean receptores β1 reduciendo FC y contractilidad"\n"¿Qué es el índice tobillo-brazo?","PAS tobillo/brazo; <0.9 indica EAP"`;
+  const TMPL_Q = `pregunta,opcion_a,opcion_b,opcion_c,opcion_d,respuesta,categoria,explicacion
+¿pH normal sangre arterial?,7.20,7.35,7.45,7.55,c,Bioquímica,El pH normal arterial es 7.35-7.45
+¿Dónde se produce insulina?,Hígado,Tiroides,Páncreas,Hipófisis,c,Fisiología,Las células beta del páncreas producen insulina`;
+  const tmpl = tab === 'flash' ? TMPL_F : TMPL_Q;
+  const save = () => { if (!preview || !preview.cards.length) return; const n = name.trim() || 'Mazo importado'; onDeckCreated({ id: uid(), name: n, pal: palFor(n), type: preview.type, cards: preview.cards }); setTxt(''); setName(''); setPreview(null); setErr(''); };
+  return (
+    <div className="fade-up">
+      <div className="page-title">Importar CSV</div>
+      <div className="page-sub">Sube tu archivo o pega el texto. Vista previa antes de guardar.</div>
+      <div className="tabs">
+        {[['flash', 'ti-cards', 'Flashcards (P/R)'], ['quiz', 'ti-help-circle', 'Quiz (4 opciones)']].map(([v, ic, lb]) => (<button key={v} className={`tab${tab === v ? ' active' : ''}`} onClick={() => { setTab(v); setPreview(null); setErr(''); setTxt(''); }}><i className={`ti ${ic}`} />{lb}</button>))}
+      </div>
+      <div className="card" style={{ marginBottom: 14 }}>
+        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>Formato requerido</div>
+        <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 10, lineHeight: 1.6 }}>{tab === 'flash' ? '2 columnas: pregunta, respuesta. Usa comillas para textos con comas.' : '6 columnas: pregunta, op_a, op_b, op_c, op_d, correcta (texto exacto de la opción correcta).'}</div>
+        <div className="mono">{tmpl}<button className="copy-btn" onClick={() => { navigator.clipboard.writeText(tmpl); setCopied(true); setTimeout(() => setCopied(false), 2000); }}>{copied ? <><i className="ti ti-check" />OK</> : <><i className="ti ti-copy" />Copiar</>}</button></div>
+      </div>
+      <div className="card card-lg" style={{ marginBottom: 14 }}>
+        <div className={`dropzone${over ? ' over' : ''}`} style={{ marginBottom: 16 }} onDragOver={e => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)} onDrop={onDrop} onClick={() => fileRef.current?.click()}>
+          <i className="ti ti-upload" style={{ fontSize: 34, color: 'var(--accent)', marginBottom: 10, display: 'block' }} />
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>Arrastra tu CSV aquí o haz clic</div>
+          <div style={{ fontSize: 12, color: 'var(--text3)' }}>.csv o .txt</div>
+          <input ref={fileRef} type="file" accept=".csv,.txt" style={{ display: 'none' }} onChange={e => onFile(e.target.files[0])} />
+        </div>
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text3)', marginBottom: 14 }}>— o pega el contenido —</div>
+        <textarea className="input" rows={5} placeholder={tab === 'flash' ? 'pregunta,respuesta\n...' : 'pregunta,a,b,c,d,correcta\n...'} value={txt} onChange={e => { setTxt(e.target.value); if (e.target.value.trim()) parse(e.target.value, tab); else setPreview(null); }} />
+        {err && <div style={{ marginTop: 9, fontSize: 12, color: 'var(--red)', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-alert-circle" />{err}</div>}
+        {preview && <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--accentbg)', borderRadius: 10, border: '1px solid var(--accentb)', display: 'flex', alignItems: 'center', gap: 9 }}><i className="ti ti-circle-check" style={{ color: 'var(--accent)', fontSize: 20 }} /><div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{preview.cards.length} {tab === 'flash' ? 'tarjetas' : 'preguntas'} detectadas</div><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 1 }}>"{(preview.cards[0]?.q || '').slice(0, 55)}"</div></div></div>}
+      </div>
+      {preview && (
+        <div className="card card-lg">
+          <div style={{ marginBottom: 14 }}><label className="label">Nombre del mazo</label><input className="input" type="text" placeholder="Ej: Farmacología — Bloque 2" value={name} onChange={e => setName(e.target.value)} style={{ resize: 'none' }} /></div>
+          <button className="btn btn-accent btn-full btn-lg" onClick={save}><i className="ti ti-plus" />Crear mazo con {preview.cards.length} {tab === 'flash' ? 'tarjetas' : 'preguntas'}</button>
+          <div className="divider" />
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Vista previa (primeras 4)</div>
+          {preview.cards.slice(0, 4).map((c, i, a) => (<div key={i} style={{ padding: '10px 0', borderBottom: i < a.length - 1 ? '1px solid var(--border)' : 'none' }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 3 }}>{c.q}</div><div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{c.a}</div></div>))}
+          {preview.cards.length > 4 && <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 9 }}>+ {preview.cards.length - 4} más...</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══ GENERATE AI ════════════════════════════════════════════════ */
+function Generate({ onDeckCreated, apiKey }) {
+  const [topic, setTopic] = useState(''), [count, setCount] = useState(10), [mode, setMode] = useState('flash'), [loading, setLoading] = useState(false), [result, setResult] = useState(null), [err, setErr] = useState('');
+  const gen = async () => {
+    if (!topic.trim()) return;
+    if (!apiKey) { setErr('Agrega tu API Key en Ajustes ⚙️.'); return; }
+    setLoading(true); setResult(null); setErr('');
+    try {
+      const sys = 'Eres médico docente experto. Responde SOLO con JSON válido, sin backticks ni texto extra.';
+      const prompt = `Genera ${count} ${mode === 'flash' ? 'flashcards' : 'preguntas de opción múltiple'} sobre: "${topic}".\n${mode === 'flash' ? `JSON: {"name":"${topic}","cards":[{"q":"pregunta clínica específica","a":"respuesta concisa"}]}` : `JSON: {"name":"${topic}","questions":[{"q":"pregunta","opts":["A","B","C","D"],"correct":"opción correcta exacta"}]}`}\nClínico, español, dificultad universitaria medicina.`;
+      const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: sys, messages: [{ role: 'user', content: prompt }] }) });
+      const d = await r.json();
+      if (d.error) throw new Error(d.error.message);
+      const data = JSON.parse(d.content.map(b => b.text || '').join('').replace(/```json|```/g, '').trim());
+      setResult({ ...data, mode });
+    } catch (e) { setErr('Error: ' + e.message); }
+    setLoading(false);
+  };
+  const save = () => {
+    if (!result) return;
+    const cards = result.mode === 'flash' ? result.cards.map(c => makeCard(c.q, c.a)) : result.questions?.map(q => ({ ...makeCard(q.q, q.correct), opts: q.opts }));
+    const name = result.name || topic;
+    onDeckCreated({ id: uid(), name, pal: palFor(name), type: result.mode, cards });
+    setResult(null); setTopic('');
+  };
+  return (
+    <div className="fade-up">
+      <div className="page-title">Generar con IA</div>
+      <div className="page-sub">Escribe un tema médico y Claude genera tu material al instante.</div>
+      {!apiKey && <div style={{ padding: '12px 16px', background: 'var(--orangebg)', border: '1px solid var(--orangeb)', borderRadius: 'var(--r2)', marginBottom: 16, fontSize: 13, color: 'var(--orange)', display: 'flex', alignItems: 'center', gap: 9 }}><i className="ti ti-alert-triangle" style={{ flexShrink: 0 }} />Necesitas tu API Key de Anthropic. Agrégala en <b>Ajustes ⚙️</b>.</div>}
+      <div className="card card-lg" style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 14 }}><label className="label">Tema médico</label><textarea className="input" rows={2} placeholder="Ej: mecanismo IECAs, fisiología renal, síndrome de Cushing..." value={topic} onChange={e => setTopic(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); gen(); } }} /><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 5 }}><span className="kbd">Ctrl+↵</span> para generar</div></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+          <div><label className="label">Tipo</label><div style={{ display: 'flex', gap: 6 }}>{[['flash', 'ti-cards', 'Flashcards'], ['quiz', 'ti-help-circle', 'Quiz']].map(([v, ic, lb]) => (<button key={v} className={`btn btn-sm${mode === v ? ' btn-accent' : ''}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setMode(v)}><i className={`ti ${ic}`} />{lb}</button>))}</div></div>
+          <div><label className="label">Cantidad: {count}</label><input type="range" min={4} max={20} step={1} value={count} onChange={e => setCount(+e.target.value)} style={{ width: '100%', accentColor: 'var(--accent)', marginTop: 7 }} /></div>
+        </div>
+        <button className="btn btn-purple btn-full btn-lg" onClick={gen} disabled={loading || !topic.trim()}>{loading ? <><div className="spin spin-dk" />Generando...</> : <><i className="ti ti-sparkles" />Generar {count} {mode === 'flash' ? 'flashcards' : 'preguntas'}</>}</button>
+        {err && <div style={{ marginTop: 10, fontSize: 12, color: 'var(--red)', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-alert-circle" />{err}</div>}
+      </div>
+      {result && (
+        <div className="card card-lg fade-up">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <div><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{result.name}</div><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 2 }}>{(result.cards || result.questions)?.length} elementos</div></div>
+            <button className="btn btn-accent" onClick={save}><i className="ti ti-plus" />Guardar mazo</button>
+          </div>
+          <div className="divider" />
+          {(result.mode === 'flash' ? result.cards : result.questions?.map(q => ({ q: q.q, a: q.correct }))).map((c, i, arr) => (<div key={i} style={{ padding: '10px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none' }}><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 3 }}>{c.q}</div><div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{c.a}</div></div>))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══ QUICK ADD MODAL ════════════════════════════════════════════ */
+function QuickAddModal({ decks, onAdd, onClose }) {
+  const [q, setQ] = useState(''), [a, setA] = useState(''), [deckId, setDeckId] = useState(decks[0]?.id || '');
+  const save = () => { if (!q.trim() || !a.trim() || !deckId) return; onAdd(deckId, makeCard(q.trim(), a.trim())); onClose(); };
+  return (
+    <div className="modal-bg" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal fade-up">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>✏️ Añadir tarjeta</div>
+          <button className="btn btn-sm btn-ghost" onClick={onClose}><i className="ti ti-x" /></button>
+        </div>
+        <div style={{ marginBottom: 12 }}><label className="label">Mazo destino</label><select className="input" value={deckId} onChange={e => setDeckId(e.target.value)} style={{ resize: 'none' }}>{decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></div>
+        <div style={{ marginBottom: 12 }}><label className="label">Pregunta</label><textarea className="input" rows={2} value={q} onChange={e => setQ(e.target.value)} placeholder="¿Qué es...? ¿Cuál es el mecanismo de...?" autoFocus /></div>
+        <div style={{ marginBottom: 18 }}><label className="label">Respuesta</label><textarea className="input" rows={3} value={a} onChange={e => setA(e.target.value)} placeholder="Respuesta concisa y precisa..." onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) save(); }} /><div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}><span className="kbd">Ctrl+↵</span> para guardar</div></div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-accent" onClick={save} disabled={!q.trim() || !a.trim() || !deckId}><i className="ti ti-plus" />Añadir tarjeta</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ CARD BROWSER MODAL ═════════════════════════════════════════ */
+function CardBrowserModal({ deck, onClose, onDeleteCard, onUpdateDeckName }) {
+  const [search, setSearch] = useState(''), [editName, setEditName] = useState(false), [nameVal, setNameVal] = useState(deck.name);
+  const filtered = deck.cards.filter(c => !search || (c.q + c.a).toLowerCase().includes(search.toLowerCase()));
+  const saveName = () => { onUpdateDeckName(nameVal.trim() || deck.name); setEditName(false); };
+  return (
+    <div className="modal-bg" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal fade-up" style={{ maxWidth: 640 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14, gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            {editName ? <input className="deck-name-edit" value={nameVal} onChange={e => setNameVal(e.target.value)} onBlur={saveName} onKeyDown={e => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') setEditName(false); }} autoFocus /> : <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => setEditName(true)}><div style={{ fontFamily: "'Syne',sans-serif", fontSize: 17, fontWeight: 800, color: 'var(--text)' }}>{nameVal}</div><i className="ti ti-pencil" style={{ fontSize: 13, color: 'var(--text3)' }} /></div>}
+            <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 3 }}>{deck.cards.length} tarjetas · {deck.cards.filter(isDue).length} pendientes · clic en nombre para editar</div>
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+            <button className="btn btn-sm btn-ghost" onClick={() => exportDeck(deck)} title="Exportar CSV"><i className="ti ti-download" />CSV</button>
+            <button className="btn btn-sm btn-ghost" onClick={onClose}><i className="ti ti-x" /></button>
+          </div>
+        </div>
+        <div className="search-wrap"><i className="ti ti-search" /><input className="search-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar tarjetas..." /></div>
+        <div style={{ maxHeight: 380, overflowY: 'auto' }}>
+          {filtered.length === 0 && <div style={{ textAlign: 'center', padding: '28px', color: 'var(--text3)', fontSize: 13 }}>Sin resultados</div>}
+          {filtered.map((c, i) => (
+            <div key={c.id} className="card-row">
+              <div style={{ width: 22, flexShrink: 0, fontSize: 10, color: 'var(--text3)', fontWeight: 700 }}>{i + 1}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={c.q}>{c.q}</div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={c.a}>{c.a}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
+                {c.reps >= 3 && <span title="Dominada" style={{ fontSize: 14 }}>⭐</span>}
+                {isDue(c) && <span className="chip chip-orange" style={{ padding: '1px 6px', fontSize: 10 }}>hoy</span>}
+                <button className="btn btn-xs btn-red" onClick={() => { if (confirm('¿Eliminar esta tarjeta?')) onDeleteCard(deck.id, c.id); }}><i className="ti ti-trash" /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 12, textAlign: 'center' }}>{filtered.length} tarjeta{filtered.length !== 1 ? 's' : ''}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ══ APP ROOT ═══════════════════════════════════════════════════ */
+const INIT_STATS = { streak: 0, lastDate: null, total: 0, correct: 0, today: 0, history: Array(7).fill(0), xp: 0, achievements: [], dailyGoal: 20, sound: true, breakEvery: 20, hadPerfect: false, hadImport: false, hadAI: false, hadSprint: false, hadMix: false, hadAdd: false, dailyHistory: {} };
+
+function App() {
+  const [decks, setDecks] = useLS('mr4_decks', []);
+  const [stats, setStats] = useLS('mr4_stats', INIT_STATS);
+  const [apiKey, setApiKey] = useLS('mr4_apikey', '');
+  const [view, setView] = useState('home');
+  const [study, setStudy] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [browsingDeck, setBrowsingDeck] = useState(null);
+  const [toasts, setToasts] = useState([]);
+
+  /* Reset today count on new day */
+  useEffect(() => {
+    const td = todayStr();
+    if (stats.lastDate !== td) {
+      const yesterday = toDate(new Date(Date.now() - 86400000));
+      setStats(s => ({ ...s, lastDate: td, today: 0, streak: s.lastDate === yesterday ? s.streak : 0 }));
+    }
+  }, []);
+
+  /* XP + studied tracking */
+  const addStudied = (ok, xpAmount = 10) => {
+    const td = todayStr();
+    setStats(s => {
+      const h = [...(s.history || Array(7).fill(0))];
+      const di = [1, 2, 3, 4, 5, 6, 0].indexOf(new Date().getDay());
+      if (di >= 0) h[di] = 1;
+      const dh = { ...(s.dailyHistory || {}) }; dh[td] = (dh[td] || 0) + 1;
+      const newXP = (s.xp || 0) + xpAmount;
+      const oldLvl = getLevel(s.xp || 0).level, newLvl = getLevel(newXP).level;
+      if (newLvl > oldLvl && s.sound !== false) { SFX.play('levelup'); confettiBlast(); }
+      return { ...s, total: (s.total || 0) + 1, correct: (s.correct || 0) + (ok ? 1 : 0), today: (s.today || 0) + 1, streak: Math.max(1, s.streak || 0), history: h, xp: newXP, dailyHistory: dh };
+    });
+  };
+
+  /* Achievement check */
+  useEffect(() => {
+    const { achievements: newAchs, newOnes } = checkAchievements(stats, decks);
+    if (newOnes.length > 0) {
+      const xpBonus = newOnes.reduce((sum, id) => { const a = ACHIEVEMENTS.find(x => x.id === id); return sum + (a ? a.xp : 0); }, 0);
+      setStats(s => ({ ...s, achievements: newAchs, xp: (s.xp || 0) + xpBonus }));
+      if (stats.sound !== false) SFX.play('xp');
+      setToasts(t => [...t, ...newOnes]);
+    }
+  }, [stats.total, stats.streak, stats.today, decks.length, stats.hadPerfect, stats.hadImport, stats.hadAI, stats.hadSprint, stats.hadMix, stats.hadAdd]);
+
+  const removeToast = id => setToasts(t => t.filter(x => x !== id));
+
+  /* Deck operations */
+  const addDeck = deck => { setDecks(d => [...d, deck]); setStats(s => ({ ...s, hadImport: true })); setView('home'); };
+  const addDeckAI = deck => { setDecks(d => [...d, deck]); setStats(s => ({ ...s, hadAI: true })); setView('home'); };
+  const deleteDeck = id => { if (confirm('¿Eliminar este mazo?')) setDecks(d => d.filter(x => x.id !== id)); };
+  const updateDeck = deck => setDecks(d => d.map(x => x.id === deck.id ? deck : x));
+  const deleteCard = (deckId, cardId) => { setDecks(d => d.map(x => x.id === deckId ? { ...x, cards: x.cards.filter(c => c.id !== cardId) } : x)); setBrowsingDeck(b => b ? { ...b, cards: b.cards.filter(c => c.id !== cardId) } : null); };
+  const addCard = (deckId, card) => { setDecks(d => d.map(x => x.id === deckId ? { ...x, cards: [...x.cards, card] } : x)); setStats(s => ({ ...s, hadAdd: true })); };
+  const updateDeckName = (deckId, name) => { setDecks(d => d.map(x => x.id === deckId ? { ...x, name, pal: palFor(name) } : x)); setBrowsingDeck(b => b && b.id === deckId ? { ...b, name, pal: palFor(name) } : b); };
+
+  /* Navigation */
+  const navTo = v => { setStudy(null); setView(v); };
+  const goStudy = (deck, mode) => { setStudy({ deck, mode }); setView('study'); };
+  const backHome = () => { setStudy(null); setView('home'); };
+
+  /* Start all due */
+  const startAll = () => {
+    const due = decks.filter(d => d.cards.some(isDue));
+    if (due.length > 0) goStudy(due[0], 'recall');
+    else if (decks.length > 0) goStudy(decks[0], 'recall');
+  };
+
+  /* Mix mode */
+  const startMix = () => {
+    const all = shuffle(decks.flatMap(d => d.cards.map(c => ({ ...c, deckName: d.name }))));
+    if (!all.length) return;
+    const mixDeck = { id: 'mix', name: 'Mix Mode', cards: all, pal: { color: '#a855f7', bg: 'rgba(168,85,247,0.12)', icon: 'ti-shuffle' } };
+    goStudy(mixDeck, 'recall');
+    setStats(s => ({ ...s, hadMix: true }));
+  };
+
+  const resetAll = () => { setDecks([]); setStats(INIT_STATS); setShowSettings(false); };
+
+  /* Active deck for study (look up from decks or use mix deck) */
+  const activeDeck = useMemo(() => {
+    if (!study) return null;
+    if (study.deck.id === 'mix') return study.deck;
+    return decks.find(d => d.id === study.deck.id) || study.deck;
+  }, [study, decks]);
+
+  const soundOn = stats.sound !== false;
+  const breakEvery = stats.breakEvery || 20;
+
+  const renderStudy = () => {
+    if (!activeDeck) return <div className="fade-up"><div style={{ padding: 40, textAlign: 'center', color: 'var(--text3)' }}>Mazo no encontrado. <button className="btn btn-sm btn-ghost" onClick={backHome}>Volver</button></div></div>;
+    const base = { deck: activeDeck, onBack: backHome, onUpdateDeck: updateDeck, addStudied, soundOn };
+    if (study.mode === 'recall') return <RecallSession {...base} breakEvery={breakEvery} />;
+    if (study.mode === 'flash') return <Flashcards {...base} />;
+    if (study.mode === 'quiz') return <Quiz {...base} onPerfect={() => setStats(s => ({ ...s, hadPerfect: true }))} />;
+    if (study.mode === 'sprint') return <SprintMode {...base} onSprintDone={() => setStats(s => ({ ...s, hadSprint: true }))} />;
+    return null;
+  };
+
+  return (
+    <>
+      <Header view={view} onNav={navTo} onSettings={() => setShowSettings(true)} stats={stats} />
+      <main className="main">
+        {view === 'home' && <Dashboard decks={decks} stats={stats} onGo={goStudy} onNav={navTo} onDelete={deleteDeck} onStartAll={startAll} onQuickAdd={() => { if (!decks.length) { alert('Primero crea un mazo (Importar o Generar IA).'); return; } setShowQuickAdd(true); }} onBrowse={d => setBrowsingDeck(d)} onMix={startMix} />}
+        {view === 'recall' && !study && <RecallHub decks={decks} onGo={goStudy} onNav={navTo} />}
+        {view === 'stats' && <StatsPage stats={stats} decks={decks} />}
+        {view === 'study' && renderStudy()}
+        {view === 'import' && <ImportCSV onDeckCreated={addDeck} />}
+        {view === 'generate' && <Generate onDeckCreated={addDeckAI} apiKey={apiKey} />}
+        {view === 'achievements' && <AchievementsPage stats={stats} />}
+      </main>
+      {showSettings && <Settings onClose={() => setShowSettings(false)} apiKey={apiKey} setApiKey={setApiKey} onReset={resetAll} stats={stats} setStats={setStats} />}
+      {showQuickAdd && decks.length > 0 && <QuickAddModal decks={decks} onAdd={addCard} onClose={() => setShowQuickAdd(false)} />}
+      {browsingDeck && <CardBrowserModal deck={browsingDeck} onClose={() => setBrowsingDeck(null)} onDeleteCard={deleteCard} onUpdateDeckName={name => updateDeckName(browsingDeck.id, name)} />}
+      {toasts.slice(0, 1).map(id => <AchievementToast key={id} achievement={id} onDone={() => removeToast(id)} />)}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script></body></html>
