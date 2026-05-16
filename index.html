@@ -23,8 +23,30 @@
   --r:16px;--r2:11px;--r3:8px;
   --sh:0 0 0 1px rgba(255,255,255,0.03),0 8px 32px rgba(0,0,0,0.5);
 }
+/* ── LIGHT MODE ──────────────────────────────── */
+.light{
+  --bg:#f4f7ff;--bg2:#edf0fb;--bg3:#e2e8f8;--card:#ffffff;--card2:#f8faff;
+  --border:rgba(0,20,100,0.07);--border2:rgba(0,20,100,0.13);
+  --text:#0d1733;--text2:#465080;--text3:#8a97c4;
+  --accentbg:rgba(0,185,100,0.09);--accentb:rgba(0,185,100,0.25);
+  --purplebg:rgba(140,70,230,0.09);--purpleb:rgba(140,70,230,0.22);
+  --redbg:rgba(220,40,80,0.08);--redb:rgba(220,40,80,0.2);
+  --orangebg:rgba(220,110,30,0.08);--orangeb:rgba(220,110,30,0.2);
+  --bluebg:rgba(50,110,230,0.08);--blueb:rgba(50,110,230,0.2);
+  --yellowbg:rgba(200,150,0,0.08);
+  --sh:0 0 0 1px rgba(0,20,100,0.05),0 4px 20px rgba(0,20,100,0.07);
+}
+.light .header{background:rgba(244,247,255,0.93);}
+.light .logo-mark{box-shadow:0 0 12px rgba(0,185,100,0.3);}
+.light .btn-accent{box-shadow:0 0 16px rgba(0,185,100,0.2);}
+.light .btn-purple{box-shadow:0 0 16px rgba(140,70,230,0.18);}
+.light .card-glow{box-shadow:0 0 0 1px rgba(0,20,100,0.05),0 4px 20px rgba(0,20,100,0.07),0 0 20px rgba(0,185,100,0.1);}
+.light ::-webkit-scrollbar-thumb{background:rgba(0,20,100,0.15);}
+/* ── THEME TRANSITION ────────────────────────── */
+body,*{transition:background-color 0.25s ease,border-color 0.2s ease,color 0.15s ease,box-shadow 0.2s ease;}
+.btn,.card,.input,.fc-face,.qopt{transition:background-color 0.25s ease,border-color 0.2s ease,color 0.15s ease,transform 0.15s ease,box-shadow 0.2s ease;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
@@ -64,6 +86,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .card-glow{box-shadow:var(--sh),0 0 20px rgba(0,232,122,0.12);border-color:var(--accentb);}
 .card-hover{transition:all 0.2s;cursor:pointer;}
 .card-hover:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 12px 40px rgba(0,0,0,0.55);}
+.light .card-hover:hover{box-shadow:0 0 0 1px rgba(0,20,100,0.08),0 8px 28px rgba(0,20,100,0.12);}
 .input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--bg3);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;resize:vertical;}
 .input:focus{border-color:var(--accent);}
 .input::placeholder{color:var(--text3);}
@@ -429,7 +452,7 @@ function BrainBreak({ onDone }) {
 }
 
 /* ══ HEADER ═════════════════════════════════════════════════════ */
-function Header({ view, onNav, onSettings, stats }) {
+function Header({ view, onNav, onSettings, stats, darkMode, onToggleTheme }) {
   const lvl = getLevel(stats.xp || 0);
   const NAV = [['home', 'ti-home', 'Inicio'], ['recall', 'ti-brain', 'Recall'], ['stats', 'ti-chart-bar', 'Stats'], ['import', 'ti-upload', 'Importar'], ['generate', 'ti-sparkles', 'IA'], ['achievements', 'ti-trophy', 'Logros']];
   return (
@@ -440,6 +463,9 @@ function Header({ view, onNav, onSettings, stats }) {
         <div className="nav-sep" />
         <div className="level-badge" title={`${stats.xp || 0} XP`}><span>{lvl.emoji}</span><span style={{ background: 'linear-gradient(135deg,#00e87a,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{lvl.name}</span></div>
         <Timer />
+        <button className="nav-btn" onClick={onToggleTheme} title={darkMode ? 'Modo claro' : 'Modo oscuro'}>
+          <i className={`ti ${darkMode ? 'ti-sun' : 'ti-moon'}`} />
+        </button>
         <button className="nav-btn" onClick={onSettings} title="Ajustes"><i className="ti ti-settings" /></button>
       </nav>
     </header>
@@ -649,7 +675,7 @@ function Dashboard({ decks, stats, onGo, onNav, onDelete, onStartAll, onQuickAdd
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   <button className="btn btn-xs btn-blue" onClick={() => onGo(deck, 'recall')}><i className="ti ti-brain" />Recall</button>
-                  <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'flash')}><i className="ti ti-cards" />Flash</button>
+                  {!deck.opts && <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'flash')}><i className="ti ti-cards" />Flash</button>}
                   <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'quiz')}><i className="ti ti-help-circle" />Quiz</button>
                   <button className="btn btn-xs btn-ghost" onClick={() => onGo(deck, 'sprint')}><i className="ti ti-bolt" />Sprint</button>
                 </div>
@@ -805,7 +831,33 @@ function RecallCards({ deck, cards, onBack, onUpdateDeck, addStudied, soundOn, b
       ) : (
         <>
           {answer.trim() && (<div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 'var(--r2)', padding: '12px 16px', marginBottom: 12, borderLeft: '3px solid var(--text3)' }}><div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 700 }}>Tu respuesta</div><div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6 }}>{answer}</div></div>)}
-          <div className="revealed-box"><div style={{ fontSize: 10, color: 'var(--accent)', marginBottom: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-bulb" />Respuesta correcta</div><div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.75 }}>{card.a}</div></div>
+
+          {/* Si la tarjeta tiene opciones (quiz CSV), mostrarlas con la correcta destacada */}
+          {card.opts && card.opts.length > 0 ? (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 10, color: 'var(--accent)', marginBottom: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-bulb" />Respuesta correcta</div>
+              {card.opts.map((opt, i) => {
+                const isCorrect = opt === card.a;
+                return (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px', marginBottom: 7, borderRadius: 'var(--r2)',
+                    background: isCorrect ? 'var(--accentbg)' : 'var(--bg3)',
+                    border: `1px solid ${isCorrect ? 'var(--accentb)' : 'var(--border)'}`,
+                  }}>
+                    <div style={{ minWidth: 22, height: 22, borderRadius: 6, background: isCorrect ? 'var(--accent)' : 'var(--border2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: isCorrect ? '#000' : 'var(--text3)', flexShrink: 0, marginTop: 1 }}>
+                      {['A','B','C','D'][i]}
+                    </div>
+                    <div style={{ fontSize: 13, color: isCorrect ? 'var(--accent)' : 'var(--text2)', lineHeight: 1.5, fontWeight: isCorrect ? 600 : 400 }}>{opt}</div>
+                    {isCorrect && <i className="ti ti-check" style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 3 }} />}
+                  </div>
+                );
+              })}
+              {card.expl && <div style={{ marginTop: 10, padding: '12px 14px', background: 'var(--bluebg)', border: '1px solid var(--blueb)', borderRadius: 'var(--r2)', borderLeft: '3px solid var(--blue)' }}><div style={{ fontSize: 10, color: 'var(--blue)', fontWeight: 700, marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>📖 Explicación</div><div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>{card.expl}</div></div>}
+            </div>
+          ) : (
+            <div className="revealed-box"><div style={{ fontSize: 10, color: 'var(--accent)', marginBottom: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: 4 }}><i className="ti ti-bulb" />Respuesta correcta</div><div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.75 }}>{card.a}</div></div>
+          )}
+
           <div>
             <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 7 }}><i className="ti ti-scale" />¿Qué tan bien la recordaste? <span className="kbd">1</span><span className="kbd">2</span><span className="kbd">3</span></div>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -1218,12 +1270,20 @@ function App() {
   const [decks, setDecks] = useLS('mr4_decks', []);
   const [stats, setStats] = useLS('mr4_stats', INIT_STATS);
   const [apiKey, setApiKey] = useLS('mr4_apikey', '');
+  const [darkMode, setDarkMode] = useLS('mr4_dark', true);
   const [view, setView] = useState('home');
   const [study, setStudy] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [browsingDeck, setBrowsingDeck] = useState(null);
   const [toasts, setToasts] = useState([]);
+
+  /* Apply theme class */
+  useEffect(() => {
+    if (darkMode) { document.documentElement.classList.remove('light'); }
+    else { document.documentElement.classList.add('light'); }
+  }, [darkMode]);
+  const toggleTheme = () => setDarkMode(d => !d);
 
   /* Reset today count on new day */
   useEffect(() => {
@@ -1316,7 +1376,7 @@ function App() {
 
   return (
     <>
-      <Header view={view} onNav={navTo} onSettings={() => setShowSettings(true)} stats={stats} />
+      <Header view={view} onNav={navTo} onSettings={() => setShowSettings(true)} stats={stats} darkMode={darkMode} onToggleTheme={toggleTheme} />
       <main className="main">
         {view === 'home' && <Dashboard decks={decks} stats={stats} onGo={goStudy} onNav={navTo} onDelete={deleteDeck} onStartAll={startAll} onQuickAdd={() => { if (!decks.length) { alert('Primero crea un mazo (Importar o Generar IA).'); return; } setShowQuickAdd(true); }} onBrowse={d => setBrowsingDeck(d)} onMix={startMix} />}
         {view === 'recall' && !study && <RecallHub decks={decks} onGo={goStudy} onNav={navTo} />}
